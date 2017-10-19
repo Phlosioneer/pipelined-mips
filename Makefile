@@ -1,6 +1,8 @@
 WARNS = -Wimplicit -Wportbind
 VERSION = -g2005
 
+TESTING_GIT = 0
+
 all: testbench
 
 execute_test:
