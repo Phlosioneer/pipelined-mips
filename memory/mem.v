@@ -33,7 +33,7 @@ module Memory(input [31:0] A_in, WD, input WE, CLK, MemToRegM, output reg [31:0]
     end
   end
 
-  always @(posedge CLK) begin
+  always @(negedge CLK) begin
     if (WE) begin // MemWrite signal
       if (A <= 32'h7FFF_FFFC && A >= 32'h7FFF_FBFC) begin
         stack[A] <= WD;

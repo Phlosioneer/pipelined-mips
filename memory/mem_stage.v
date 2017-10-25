@@ -28,7 +28,13 @@ module mem_stage(input CLK, RegWriteE, MemtoRegE, MemWriteE,
     RegWriteM, MemtoRegM, MemWriteM, ALUOutM, WriteDataM, WriteRegM,
     HasDivM, DivHiM, DivLoM);
 
-  Memory dataMemory(.A_in(ALUOutM), .WD(WriteDataM), .WE(MemWriteM), .CLK(CLK), .MemToRegM(MemtoRegM), .RD(RD));
+  Memory dataMemory(
+	.A_in(ALUOutM),
+	.WD(WriteDataM),
+	.WE(MemWriteM),
+	.CLK(CLK),
+	.MemToRegM(MemtoRegM),
+	.RD(RD));
 
 endmodule
 
