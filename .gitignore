@@ -2,3 +2,6 @@
 *.out
 *.dump
 *.vcd
+*.o
+*.srec
+*_debug

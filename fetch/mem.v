@@ -2,18 +2,33 @@
 `ifndef FETCH_MEM_H
 `define FETCH_MEM_H
 
-module memory(readAddress, memInstruction);
-
+module memory(clock, readAddress, memInstruction, start_addr);
+input clock;
 input [31:0] readAddress; 
 output [31:0] memInstruction;
+output [31:0] start_addr;
 
 reg [31:0] mem [32'h100000:32'h101000];
+reg is_init;
+
+// String
+reg [99:0] program;
 
 initial begin
-  $readmemh("program.v", mem);
+  if ($value$plusargs("DAT=%s", program)) begin
+    $readmemh(program, mem);
+  end else begin
+    $readmemh("program.dat", mem);
+  end
 end
 
-assign memInstruction = mem[readAddress >> 2];
+always @(posedge clock) begin
+	is_init <= 1;
+end
+
+// -4 to account for the 1 cycle stall at the start of the simulation.
+assign start_addr = mem[32'h0040_0000] - 4;
+assign memInstruction = is_init ? mem[readAddress >> 2] : 0;
 endmodule
 
 `endif

@@ -17,11 +17,12 @@ output [31:0] instructionf;
 
 wire [31:0] next_count;
 wire [31:0] cur_count;
-program_counter pc(clk, stallf, next_count, cur_count);
+wire [31:0] start_addr;
+program_counter pc(clk, stallf, next_count, start_addr, cur_count);
 adder ad1(cur_count, 4, pc_plus_4f);
 mux_two mux1(pc_branch_d, pc_plus_4f, pcsrc_d, next_count);
 
-memory mem(cur_count, instructionf);
+memory mem(clk, cur_count, instructionf, start_addr);
 
 endmodule
 `endif
