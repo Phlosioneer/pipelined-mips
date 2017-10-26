@@ -8,7 +8,7 @@ input [31:0] readAddress;
 output [31:0] memInstruction;
 output [31:0] start_addr;
 
-reg [31:0] mem [32'h100000:32'h101000];
+reg [31:0] mem [32'h0010_0000:32'h0010_1000];
 reg is_init;
 
 // String
@@ -20,6 +20,7 @@ initial begin
   end else begin
     $readmemh("program.dat", mem);
   end
+  is_init = 0;
 end
 
 always @(posedge clock) begin
@@ -27,7 +28,7 @@ always @(posedge clock) begin
 end
 
 // -4 to account for the 1 cycle stall at the start of the simulation.
-assign start_addr = mem[32'h0040_0000] - 4;
+assign start_addr = mem[32'h0010_0000];
 assign memInstruction = is_init ? mem[readAddress >> 2] : 0;
 endmodule
 
