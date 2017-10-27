@@ -37,6 +37,8 @@ module alu_control(opcode, funct, alu_op);
 			`ADDIU: alu_op = `ALU_add;
 			`ORI: alu_op = `ALU_OR;
 			`LUI: alu_op = `ALU_slli;	// We're shifting the imm value by 16
+			`SLTI: alu_op = `ALU_slt;
+			`SLTIU: alu_op = `ALU_slt;
 			default: alu_op = `ALU_undef;
 		endcase
 	end

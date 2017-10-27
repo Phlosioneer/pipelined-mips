@@ -46,12 +46,13 @@ begin
         `ALU_slt: result = truevall < truevalr; // lvalue < rvalue;
         `ALU_sll: result = truevall << shamt;
         `ALU_sra: result = truevall >>> shamt;
-	`ALU_rs_pass: result = truevalr;	// truevaluer is the immediate value
-	`ALU_slli: result = truevalr << shamt;	// SLL on an immediate value
-	`ALU_div: begin
-		div_lo = truevall / truevalr;
-		div_hi = truevall % truevalr;
-	end
+		`ALU_rs_pass: result = truevalr;	// truevaluer is the immediate value
+		`ALU_slli: result = truevalr << shamt;	// SLL on an immediate value
+		`ALU_div: begin
+			div_lo = truevall / truevalr;
+			div_hi = truevall % truevalr;
+		end
+		`ALU_slt: result = (truevall < truevalr);	// 1 if lvalue < rvalue; 0 otherwise.
         `ALU_undef: result = `dc32;
     endcase
 end

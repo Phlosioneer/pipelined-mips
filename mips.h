@@ -338,6 +338,7 @@
 `define ALU_rs_pass			4'b1101
 `define ALU_slli			4'b1110
 `define ALU_div				4'b1111
+`define ALU_slt				4'b0011
 
 `define ALUOP_LWSW			2'b00
 `define ALUOP_RFMT			2'b10

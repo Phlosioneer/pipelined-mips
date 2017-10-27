@@ -85,6 +85,8 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 		((opcode == `SPECIAL) && reg_write_special) |
 		(opcode == `ADDIU) |
 		(opcode == `ORI) |
+		(opcode == `SLTI) |
+		(opcode == `SLTIU) |
 		(opcode == `LUI) |
 		(opcode == `LW) |
 		(opcode == `LB);
@@ -92,7 +94,8 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 	assign reg_write_special = !((funct == `JR) || (funct == `SYSCALL));
 	
 	assign imm_is_unsigned =
-		(opcode == `ORI);
+		(opcode == `ORI) |
+		(opcode == `SLTIU);
 
 	assign mem_to_reg =
 		(opcode == `LW) |
