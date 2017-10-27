@@ -102,6 +102,9 @@ module cpu(clock);
     wire [31:0] DivLoM;
     wire [31:0] DivLoW;
 
+    wire IsLBD;
+    wire IsLBE;
+
     //this wire is a mux for ResultW
     wire [31:0] ResultW;
     assign ResultW = MemtoRegW ? ReadDataW : ALUOutW;
@@ -167,6 +170,7 @@ module cpu(clock);
         .alu_src(ALUSrcD),
         .reg_dest(RegDstD),
 	.HasDivD(HasDivD),
+	.IsLBD(IsLBD),
 
 	// Control to Hazard
 	.MfOpInD(MfOpInD),
@@ -205,6 +209,7 @@ module cpu(clock);
 	.syscall_functD(syscall_functD),
 	.syscall_param1D(syscall_param1D),
 	.HasDivD(HasDivD),
+	.IsLBD(IsLBD),
 
         // Output to the mem stage.
         .RegWriteE(RegWriteE),
@@ -223,6 +228,7 @@ module cpu(clock);
 	.HasDivE(HasDivE),
 	.DivHiE(DivHiE),
 	.DivLoE(DivLoE),
+	.IsLBE(IsLBE),
 
         // Input from the hazard unit.
         .ForwardAE(ForwardAE),
@@ -236,7 +242,9 @@ module cpu(clock);
 
     mem_stage myMemStage(
         .CLK(clock),
-        .RegWriteE(RegWriteE),
+
+        // Input from the Execute stage.
+	.RegWriteE(RegWriteE),
         .MemtoRegE(MemtoRegE),
         .MemWriteE(MemWriteE),
         .ALUOutE(ALUOutE),
@@ -245,6 +253,9 @@ module cpu(clock);
 	.HasDivE(HasDivE),
 	.DivHiE(DivHiE),
 	.DivLoE(DivLoE),
+	.IsLBE(IsLBE),
+
+	// Output to the WB stage.
         .RegWriteM(RegWriteM),
         .MemtoRegM(MemtoRegM),
         .RD(Writeback_RD),

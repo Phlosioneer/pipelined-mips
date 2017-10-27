@@ -27,6 +27,7 @@ OBJDUMP=$(MIPSEL)objdump
 # these are the flags we need for bare metal code generation
 CFLAGS=-fpic -mno-abicalls -nostdlib -static $(COMMON_CFLAGS)
 LDFLAGS=-L/usr/remote/mipsel/lib/gcc/mipsel-buildroot-linux-uclibc/4.6.3 -lgcc_eh --oformat=srec
+OBJDUMP_FLAGS=-m mips --endian=little
 
 OBJECTS=$(ASMOBJ:.o=_mips.o) $(COBJ:.o=_mips.o)
 	
@@ -44,7 +45,8 @@ BIN_OUTPUT=fib
 D_BIN_OUTPUT=fib_debug
 GCC_OUTPUT=fib.srec
 VERILOG_OUTPUT=fib.dat
-OUTPUT=$(BIN_OUTPUT) $(GCC_OUTPUT) $(VERILOG_OUTPUT) $(D_BIN_OUTPUT)
+OBJDUMP_OUTPUT=fib.dis
+OUTPUT=$(BIN_OUTPUT) $(GCC_OUTPUT) $(VERILOG_OUTPUT) $(D_BIN_OUTPUT) $(OBJDUMP_OUTPUT)
 
 .PHONY: all, debug
 
@@ -66,6 +68,9 @@ $(GCC_OUTPUT): $(OBJECTS)
 $(VERILOG_OUTPUT): $(GCC_OUTPUT)
 	# Convert the gcc output SRecord into a Motorola SRecord for mips
 	./vmem_injector.sh $(GCC_OUTPUT) $(VERILOG_OUTPUT)
+
+$(OBJDUMP_OUTPUT): $(GCC_OUTPUT)
+	$(OBJDUMP) $(OBJDUMP_FLAGS) -D $^ > $@
 
 %_mips.o: %.c
 	# compile C to object files as usual

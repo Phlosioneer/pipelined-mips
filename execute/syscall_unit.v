@@ -16,6 +16,7 @@ module syscall_unit(is_syscall, syscall_funct, syscall_param1);
 		if (is_syscall) begin
 			case (syscall_funct)
 				`SYSCALL_PRINT_INT: $display("%d", syscall_param1);
+				`SYSCALL_PUT_C: $display("%c", syscall_param1 & 16'hFF);
 				`SYSCALL_EXIT: $finish;
 			endcase
 		end

@@ -18,7 +18,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 
 		reg_write_D, mem_to_reg, mem_write, alu_op, alu_src, reg_dest, pc_src,
 		
-		syscall, syscall_funct, syscall_param1, MfOpInD, HasDivD);
+		syscall, syscall_funct, syscall_param1, MfOpInD, HasDivD, IsLBD);
 
 	input wire clock;
 
@@ -62,6 +62,8 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 	// This output is used by the hazard unit. It is 1 if the current
 	// instruction is MFHI or MFLO.
 	output wire MfOpInD;
+
+	output wire IsLBD;
 	
 	// Internal wires.
 	wire is_r_type;
@@ -156,7 +158,8 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.shamtD (shamtD),
 		.is_mf_hi (is_mf_hi),
 		.is_mf_lo (is_mf_lo),
-		.HasDivD (HasDivD)
+		.HasDivD (HasDivD),
+		.IsLBD(IsLBD)
 		);
 	
 	// The jump decider.

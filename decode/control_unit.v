@@ -13,7 +13,7 @@
 module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 		mem_to_reg, mem_write, alu_op, alu_src, reg_dest,
 		branch_variant, syscall, imm_is_unsigned, shamtD, is_mf_hi, is_mf_lo,
-		HasDivD);
+		HasDivD, IsLBD);
 
 	input wire [5:0] opcode;
 	input wire [5:0] funct;
@@ -54,6 +54,9 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 	// 1 if the current instruction is divide.
 	output wire HasDivD;
 
+	// 1 if the current instruction is LB.
+	output wire IsLBD;
+
 	// wire is_r_type;	// Declared as an output.
 	wire is_i_type;
 	wire is_j_type;
@@ -72,6 +75,8 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 
 	assign HasDivD = (opcode == `SPECIAL) && (funct == `DIV);
 
+	assign IsLBD = (opcode == `LB);
+
 	assign mem_write =
 		(opcode == `SW) |
 		(opcode == `SB);
@@ -81,7 +86,8 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 		(opcode == `ADDIU) |
 		(opcode == `ORI) |
 		(opcode == `LUI) |
-		(opcode == `LW);
+		(opcode == `LW) |
+		(opcode == `LB);
 
 	assign reg_write_special = !((funct == `JR) || (funct == `SYSCALL));
 	
@@ -89,7 +95,8 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 		(opcode == `ORI);
 
 	assign mem_to_reg =
-		(opcode == `LW);
+		(opcode == `LW) |
+		(opcode == `LB);
 	
 	assign is_shift_op =
 		(opcode == `SPECIAL) & (

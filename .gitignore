@@ -1,7 +1,26 @@
+# Vim backup files.
 *.swp
+
+# GCC Outputs
 *.out
-*.dump
-*.vcd
 *.o
+
+# Verilog testbench outputs.
+*.dump
+
+# The built mips executable.
 *.srec
+
+# The built debug executable.
 *_debug
+
+# Raw bytes of mips executable, for disassemblers
+# (in ascii format, not binary)
+*.raw
+
+# Automatically generated disassembly of the mips executable,
+# used for debugging.
+*.dis
+
+# Test file to pipe testbench output when it's too big for stdout.
+out.txt

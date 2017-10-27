@@ -33,6 +33,7 @@ module alu_control(opcode, funct, alu_op);
 			`SW: alu_op = `ALU_add;
 			`SB: alu_op = `ALU_add;
 			`LW: alu_op = `ALU_add;
+			`LB: alu_op = `ALU_add;
 			`ADDIU: alu_op = `ALU_add;
 			`ORI: alu_op = `ALU_OR;
 			`LUI: alu_op = `ALU_slli;	// We're shifting the imm value by 16

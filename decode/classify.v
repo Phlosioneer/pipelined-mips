@@ -32,6 +32,7 @@ module classify(opcode, is_r_type, is_i_type, is_j_type);
 		(opcode == `ADDIU) |
 		(opcode == `LUI) |
 		(opcode == `LW) |
+		(opcode == `LB) |
 		(opcode == `SW) |
 		(opcode == `SB) |
 		(opcode == `REGIMM) |

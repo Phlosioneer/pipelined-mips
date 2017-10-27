@@ -8,6 +8,6 @@
 # generate a $display call
 
 putc_mips:
-    li $v0, 4
+    li $v0, 11
     syscall
     jr $ra

@@ -26,9 +26,5 @@ int main(void)
 	itoa(f, s, BUFFER_SIZE, 10);
 	puts(s);
 	puts("\n");
-	puts("Test string:");
-	itoa(1234, s, BUFFER_SIZE, 10);
-	puts(s);
-	puts("\n");
 	return 0;
 }

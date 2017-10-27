@@ -14,6 +14,7 @@ reg is_init;
 // String
 reg [99:0] program;
 
+// TODO: Integrate with memory/mem.v
 initial begin
   if ($value$plusargs("DAT=%s", program)) begin
     $readmemh(program, mem);
