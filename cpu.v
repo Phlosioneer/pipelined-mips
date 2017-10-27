@@ -102,8 +102,8 @@ module cpu(clock);
     wire [31:0] DivLoM;
     wire [31:0] DivLoW;
 
-    wire IsLBD;
-    wire IsLBE;
+    wire IsByteD;
+    wire IsByteE;
 
     //this wire is a mux for ResultW
     wire [31:0] ResultW;
@@ -149,9 +149,9 @@ module cpu(clock);
         .writeback_value(ResultW), 
         .writeback_id(WriteRegW), 
         .reg_write_W(RegWriteW),
-	.HasDivW(HasDivW),
-	.DivHiW(DivHiW),
-	.DivLoW(DivLoW),
+		.HasDivW(HasDivW),
+		.DivHiW(DivHiW),
+		.DivLoW(DivLoW),
 
         // Decode to EX.
         .reg_rs_value(RD1D),
@@ -169,20 +169,20 @@ module cpu(clock);
         .alu_op(ALUControlD),
         .alu_src(ALUSrcD),
         .reg_dest(RegDstD),
-	.HasDivD(HasDivD),
-	.IsLBD(IsLBD),
+		.HasDivD(HasDivD),
+		.IsByteD(IsByteD),
 
-	// Control to Hazard
-	.MfOpInD(MfOpInD),
+		// Control to Hazard
+		.MfOpInD(MfOpInD),
 
-        // Outputs back to fetch.
-	.pc_src (pc_src_d),
-        .jump_address(pc_branch_d),
+		// Outputs back to fetch.
+		.pc_src (pc_src_d),
+	    .jump_address(pc_branch_d),
 
-	// Syscall logic
-	.syscall(syscallD),
-	.syscall_funct(syscall_functD),
-	.syscall_param1(syscall_param1D)
+		// Syscall logic
+		.syscall(syscallD),
+		.syscall_funct(syscall_functD),
+		.syscall_param1(syscall_param1D)
         );
 
     execute_stage EX_stage(
@@ -205,11 +205,11 @@ module cpu(clock);
         .RdD(RdD),
         .SignImmD(SignImmD),
         .shamtD(shamtD),
-	.syscallD(syscallD),
-	.syscall_functD(syscall_functD),
-	.syscall_param1D(syscall_param1D),
-	.HasDivD(HasDivD),
-	.IsLBD(IsLBD),
+		.syscallD(syscallD),
+		.syscall_functD(syscall_functD),
+		.syscall_param1D(syscall_param1D),
+		.HasDivD(HasDivD),
+		.IsByteD(IsByteD),
 
         // Output to the mem stage.
         .RegWriteE(RegWriteE),
@@ -225,10 +225,10 @@ module cpu(clock);
         .SignImmE(SignImmE),
         .ResultW(ResultW),
         .ALUOutM(ALUOutM),
-	.HasDivE(HasDivE),
-	.DivHiE(DivHiE),
-	.DivLoE(DivLoE),
-	.IsLBE(IsLBE),
+		.HasDivE(HasDivE),
+		.DivHiE(DivHiE),
+		.DivLoE(DivLoE),
+		.IsByteE(IsByteE),
 
         // Input from the hazard unit.
         .ForwardAE(ForwardAE),
@@ -244,26 +244,26 @@ module cpu(clock);
         .CLK(clock),
 
         // Input from the Execute stage.
-	.RegWriteE(RegWriteE),
+		.RegWriteE(RegWriteE),
         .MemtoRegE(MemtoRegE),
         .MemWriteE(MemWriteE),
         .ALUOutE(ALUOutE),
         .WriteDataE(WriteDataE),
         .WriteRegE(WriteRegE),
-	.HasDivE(HasDivE),
-	.DivHiE(DivHiE),
-	.DivLoE(DivLoE),
-	.IsLBE(IsLBE),
+		.HasDivE(HasDivE),
+		.DivHiE(DivHiE),
+		.DivLoE(DivLoE),
+		.IsByteE(IsByteE),
 
-	// Output to the WB stage.
+		// Output to the WB stage.
         .RegWriteM(RegWriteM),
         .MemtoRegM(MemtoRegM),
         .RD(Writeback_RD),
         .ALUOutM(ALUOutM),
         .WriteRegM(WriteRegM),
-	.HasDivM(HasDivM),
-	.DivHiM(DivHiM),
-	.DivLoM(DivLoM)
+		.HasDivM(HasDivM),
+		.DivHiM(DivHiM),
+		.DivLoM(DivLoM)
         );
     
     //writeback pipe

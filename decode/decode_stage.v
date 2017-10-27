@@ -18,7 +18,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 
 		reg_write_D, mem_to_reg, mem_write, alu_op, alu_src, reg_dest, pc_src,
 		
-		syscall, syscall_funct, syscall_param1, MfOpInD, HasDivD, IsLBD);
+		syscall, syscall_funct, syscall_param1, MfOpInD, HasDivD, IsByteD);
 
 	input wire clock;
 
@@ -63,7 +63,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 	// instruction is MFHI or MFLO.
 	output wire MfOpInD;
 
-	output wire IsLBD;
+	output wire IsByteD;
 	
 	// Internal wires.
 	wire is_r_type;
@@ -159,7 +159,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.is_mf_hi (is_mf_hi),
 		.is_mf_lo (is_mf_lo),
 		.HasDivD (HasDivD),
-		.IsLBD(IsLBD)
+		.IsByteD(IsByteD)
 		);
 	
 	// The jump decider.
