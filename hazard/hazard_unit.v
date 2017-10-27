@@ -110,6 +110,9 @@ wire lwStall;
 // is waiting on HasDiv in the other stages.
 wire stallMfOp;
 
+wire branch_source_in_e;
+wire branch_source_in_m;
+
 // Syscall needs to stall if there are any instructions in the pipeline write
 // to v0 or a0.
 assign stallSyscallV0 = (WriteRegE == `v0) || (WriteRegM == `v0) || (WriteRegW == `v0);
@@ -120,11 +123,19 @@ assign stallSyscall = syscallD && (stallSyscallV0 || stallSyscallA0);
 // wait for any divide operation still in execute/memory/writeback.
 assign stallMfOp = MfOpInD && (HasDivE || HasDivM || HasDivW);
 
+// branch_source_in_e is true if a branch comparison reg is going to be
+// written from the execute stage.
+assign branch_source_in_e = (RegWriteE &&
+				(WriteRegE == RsD || WriteRegE == RtD));
+
+// branch_source_in_m is true if a branch comparison reg is going to be
+// written from the memory stage.
+assign branch_source_in_m = (RegWriteM &&
+				(WriteRegM == RsD || WriteRegM == RtD));
+
 // branchStall is high if we're branching and currently writing to a source reg
-assign branchStall = (BranchD && RegWriteE && 
-					  (WriteRegE == RsD || WriteRegE == RtD))
-				  || (BranchD && MemtoRegM && 
-				  	  (WriteRegM == RsD || WriteRegM == RtD));
+assign branchStall = (BranchD &&
+		(branch_source_in_e || branch_source_in_m));
 
 // lwStall is high when we're writing from memory to a reg
 assign lwStall = ((RsD == RtE) || (RtD == RtE)) && MemtoRegE;
