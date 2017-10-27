@@ -11,7 +11,7 @@
 `define TEXT_DAT_TOP 32'h0010_1000
 `define TEXT_DAT_BOT 32'h0010_0000
 
-// `define MEM_VERBOSE
+`define MEM_VERBOSE
 
 
 module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output reg [31:0] RD);
@@ -82,6 +82,7 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
     end // MemWrite signal if block
   end // always block
 endmodule
+
 
 `endif
 // // Module representing everything between the register banks surrounding the Memory state

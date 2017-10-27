@@ -22,6 +22,7 @@ module mem_stage(input CLK, RegWriteE, MemtoRegE, MemWriteE,
   wire [31:0] raw_mem_output;
   wire [7:0] byte_mem_output;
   wire [31:0] signed_byte_mem_output;
+  wire [1:0] byte_index;
 
   // Modules
   mem_pipeline_register memPipelineRegister(
@@ -59,7 +60,9 @@ module mem_stage(input CLK, RegWriteE, MemtoRegE, MemWriteE,
 	.RegWriteM(RegWriteM),
 	.RD(raw_mem_output));
 
-  assign byte_mem_output = raw_mem_output[7:0];
+  assign byte_index = ALUOutM[1:0];
+
+  word_indexer indexer(raw_mem_output, byte_index, byte_mem_output);
 
   assign RD = IsLBM ? signed_byte_mem_output : raw_mem_output;
 
@@ -74,5 +77,21 @@ module byte_sign_extend(in, out);
 	assign out = in;
 
 endmodule
+
+module word_indexer(word, index, byte);
+
+        input wire [31:0] word;
+        input wire [1:0] index;
+        output wire [7:0] byte;
+
+        wire [31:0] shifted_word;
+
+        assign shifted_word = word >> (8 * index);
+
+        assign byte = shifted_word[7:0];
+
+endmodule
+
+
 
 `endif
