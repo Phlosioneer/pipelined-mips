@@ -22,6 +22,7 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	
 	// This register ID is used like a funct for opcode 1 (called REGIMM)
 	input wire [4:0] reg_rt_id;
+	wire [4:0] regimm;
 
 	// Used by the decoder and jump_unit.
 	output wire is_r_type;
@@ -73,6 +74,8 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	// True if the special opcode requires reg_write. Junk if the current
 	// instruction isn't special.
 	wire reg_write_special;
+
+	assign regimm = reg_rt_id;
 
 	alu_control alu(opcode, funct, alu_op);
 	classify classifier(opcode, is_r_type, is_i_type, is_j_type);
@@ -129,8 +132,8 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	assign bgt =
 		(opcode == `J) |
 		(opcode == `JAL) |
-		((opcode == `REGIMM) && (funct == `BGEZ)) |
-		((opcode == `REGIMM) && (funct == `BGEZAL)) |
+		((opcode == `REGIMM) && (regimm == `BGEZ)) |
+		((opcode == `REGIMM) && (regimm == `BGEZAL)) |
 		(opcode == `BGTZ) |
 		((opcode == `SPECIAL) && (funct == `JR)) |
 		(opcode == `BNE);
@@ -142,7 +145,7 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		(opcode == `BEQ) |
 		(opcode == `BGTZ) |
 		(opcode == `BLEZ) |
-		((opcode == `REGIMM) && (funct == `BGEZAL));
+		((opcode == `REGIMM) && (regimm == `BGEZAL));
 	
 	assign blt =
 		(opcode == `J) |
@@ -150,19 +153,19 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		((opcode == `SPECIAL) && (funct == `JR)) |
 		(opcode == `BNE) |
 		(opcode == `BLEZ) |
-		((opcode == `REGIMM) && (funct == `BLTZ)) |
-		((opcode == `REGIMM) && (funct == `BLTZAL));
+		((opcode == `REGIMM) && (regimm == `BLTZ)) |
+		((opcode == `REGIMM) && (regimm == `BLTZAL));
 
 	assign rt_is_zero =
-		((opcode == `REGIMM) && (funct == `BGEZ)) |
-		((opcode == `REGIMM) && (funct == `BGEZAL)) |
-		((opcode == `REGIMM) && (funct == `BLTZ)) |
+		((opcode == `REGIMM) && (regimm == `BGEZ)) |
+		((opcode == `REGIMM) && (regimm == `BGEZAL)) |
+		((opcode == `REGIMM) && (regimm == `BLTZ)) |
 		(opcode == `BGTZ) |
 		(opcode == `BLEZ);
 
 	assign link_reg =
-		((opcode == `REGIMM) && (funct == `BLTZAL)) |
-		((opcode == `REGIMM) && (funct == `BGEZAL)) |
+		((opcode == `REGIMM) && (regimm == `BLTZAL)) |
+		((opcode == `REGIMM) && (regimm == `BGEZAL)) |
 		(opcode == `JAL);
 
 endmodule
