@@ -18,7 +18,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 
 		reg_write_D, mem_to_reg, mem_write, alu_op, alu_src, reg_dest, pc_src,
 		
-		syscall, syscall_funct, syscall_param1, MfOpInD, HasDivD, IsByteD);
+		syscall, syscall_funct, syscall_param1, MfOpInD, HasDivD, IsByteD, BranchD);
 
 	input wire clock;
 
@@ -63,6 +63,11 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 	// instruction is MFHI or MFLO.
 	output wire MfOpInD;
 
+	// This output is used by the hazard unit. It is 1 if the current
+	// instruction is a branch.
+	output wire BranchD;
+
+	// This output is used by the memory stage.
 	output wire IsByteD;
 	
 	// Internal wires.
@@ -193,6 +198,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.rt_is_zero(rt_is_zero),
 		.jump_address (jump_address),
 		.pc_src (pc_src),
+		.branch (BranchD),
 		.ra_write_value (ra_write_value),
 		.ra_write (ra_write)
 		);

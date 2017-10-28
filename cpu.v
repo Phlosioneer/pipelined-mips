@@ -174,6 +174,7 @@ module cpu(clock);
 
 		// Control to Hazard
 		.MfOpInD(MfOpInD),
+		.BranchD(BranchD),
 
 		// Outputs back to fetch.
 		.pc_src (pc_src_d),
@@ -291,7 +292,7 @@ module cpu(clock);
 	// Inputs
 	.RsD(RsD),
 	.RtD(RtD),
-	.BranchD(pc_src_d),
+	.BranchD(BranchD),
 	.RsE(RsE),
 	.RtE(RtE),
 	.WriteRegE(WriteRegE),

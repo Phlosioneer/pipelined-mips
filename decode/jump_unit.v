@@ -73,7 +73,9 @@ module jump_unit(pc_plus_four, maybe_jump_address, maybe_branch_address,
 
 	assign jump_reg_address = reg_rs;
 
-	assign branch = blt || beq || bgt;
+	// True if the current instruction is a branch, i.e. it depends on
+	// register values.
+	assign branch = (blt || beq || bgt) && is_i_type;
 	
 	assign ra_write = pc_src && link_reg;
 
