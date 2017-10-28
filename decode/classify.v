@@ -38,6 +38,8 @@ module classify(opcode, is_r_type, is_i_type, is_j_type);
 		(opcode == `REGIMM) |
 		(opcode == `BNE) |
 		(opcode == `BEQ) |
+		(opcode == `BGTZ) |
+		(opcode == `BLEZ) |
 		(opcode == `ORI) |
 		(opcode == `SLTI) |
 		(opcode == `SLTIU);
