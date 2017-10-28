@@ -8,7 +8,9 @@
 `ifndef CLASSIFY
 `define CLASSIFY
 
-module classify(opcode, is_r_type, is_i_type, is_j_type);
+module classify(clock, opcode, is_r_type, is_i_type, is_j_type);
+	// The clock is only used for error reporting / debugging.
+	input wire clock;
 	input wire [5:0] opcode;
 	output wire is_r_type;
 	output wire is_i_type;
@@ -41,6 +43,7 @@ module classify(opcode, is_r_type, is_i_type, is_j_type);
 		(opcode == `BGTZ) |
 		(opcode == `BLEZ) |
 		(opcode == `ORI) |
+		(opcode == `ANDI) |
 		(opcode == `SLTI) |
 		(opcode == `SLTIU);
 
@@ -49,7 +52,7 @@ module classify(opcode, is_r_type, is_i_type, is_j_type);
 		(opcode == `J) |
 		(opcode == `JAL);
 
-	always @(*) begin
+	always @(negedge clock) begin
 		if (~(is_r_type | is_i_type | is_j_type)) begin
 			$display($time, ": Unclassified opcode found: %b", opcode);
 		end

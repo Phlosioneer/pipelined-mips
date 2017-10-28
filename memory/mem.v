@@ -11,7 +11,7 @@
 `define TEXT_DAT_TOP 32'h0010_1000
 `define TEXT_DAT_BOT 32'h0010_0000
 
-`define MEM_VERBOSE
+//`define MEM_VERBOSE
 
 
 module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output reg [31:0] RD);
@@ -22,6 +22,8 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
   // String
   reg [99:0] program_name;
 
+  reg mem_verbose;
+
   // TODO: Integrate with fetch/mem.v
   initial begin
     if ($value$plusargs("DAT=%s", program_name)) begin
@@ -29,6 +31,11 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
     end else begin
     	$readmemh("program.dat", text_dat);
     end
+
+	if (~$value$plusargs("MEM_VERBOSE=%d", mem_verbose)) begin
+		// If no value is given, assume false.
+		mem_verbose = 0;
+	end
   end
 
   wire [31:0] text_A;
@@ -39,20 +46,16 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
     if (A <= `STACK_TOP && A >= `STACK_BOT) begin
       RD <= stack[A];
 
-      `ifdef MEM_VERBOSE
-        if (MemToRegM) begin
+       if (MemToRegM && mem_verbose) begin
           $display($time, ": Reading from .stack address [%h]: %h", A, stack[A]);
-        end
-      `endif
+       end
     end else if (text_A <= `TEXT_DAT_TOP && text_A >= `TEXT_DAT_BOT) begin
       // TODO: LB can do un-aligned memory access. That means accessing
       // a particular byte within a word!
       
-      `ifdef MEM_VERBOSE
-        if (MemToRegM) begin
+        if (MemToRegM && mem_verbose) begin
       	  $display($time, ": Reading from .text address [%h]: %h", text_A, text_dat[text_A]);
         end
-      `endif
       RD <= text_dat[text_A];
     end else begin
       if (MemToRegM && RegWriteM) begin
@@ -65,17 +68,17 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
   always @(negedge CLK) begin
     if (WE) begin // MemWrite signal
       if (A <= 32'h7FFF_FFFC && A >= 32'h7FFF_FBFC) begin
-        `ifdef MEM_VERBOSE
-	  $display($time, ": Writing to .stack address [%h]: %h replacing %h",
-			  A, WD, stack[A]);
-	`endif
+	  	if (mem_verbose) begin
+			$display($time, ": Writing to .stack address [%h]: %h replacing %h",
+				  A, WD, stack[A]);
+		end
         stack[A] <= WD;
       end else if (text_A <= `TEXT_DAT_TOP && text_A >= `TEXT_DAT_BOT) begin
-        `ifdef MEM_VERBOSE
-          $display($time, ": Writing to .text (read-only) address [%h]: %h replacing %h",
-			 text_A, WD, text_dat[text_A]);
-	`endif
-        text_dat[text_A] <= WD;
+	  	if (mem_verbose) begin
+        	$display($time, ": Writing to .text (read-only) address [%h]: %h replacing %h",
+				 text_A, WD, text_dat[text_A]);
+		end
+		text_dat[text_A] <= WD;
       end else begin
         $display($time, ": Tried to write to unallocated address %h", A);
       end

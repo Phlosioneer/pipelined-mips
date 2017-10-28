@@ -10,12 +10,14 @@
 `include "decode/classify.v"
 `include "decode/alu_control.v"
 
-module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
+module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		is_i_type, is_j_type, reg_write,
 		mem_to_reg, mem_write, alu_op, alu_src, reg_dest,
 		syscall, imm_is_unsigned, shamtD, is_mf_hi, is_mf_lo,
 		HasDivD, IsByteD, bgt, beq, blt, rt_is_zero, link_reg);
 
+	// The clock is only used for error reporting / debugging.
+	input wire clock;
 	input wire [5:0] opcode;
 	input wire [5:0] funct;
 	input wire [4:0] instr_shamt;
@@ -77,8 +79,8 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 
 	assign regimm = reg_rt_id;
 
-	alu_control alu(opcode, funct, alu_op);
-	classify classifier(opcode, is_r_type, is_i_type, is_j_type);
+	alu_control alu(clock, opcode, funct, alu_op);
+	classify classifier(clock, opcode, is_r_type, is_i_type, is_j_type);
 
 	assign is_mf_hi = (opcode == `SPECIAL) && (funct == `MFHI);
 	assign is_mf_lo = (opcode == `SPECIAL) && (funct == `MFLO);
@@ -94,6 +96,7 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	assign reg_write =
 		((opcode == `SPECIAL) && reg_write_special) |
 		(opcode == `ADDIU) |
+		(opcode == `ANDI) |
 		(opcode == `ORI) |
 		(opcode == `SLTI) |
 		(opcode == `SLTIU) |
@@ -105,6 +108,7 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	
 	assign imm_is_unsigned =
 		(opcode == `ORI) |
+		(opcode == `ANDI) |
 		(opcode == `SLTIU);
 
 	assign mem_to_reg =

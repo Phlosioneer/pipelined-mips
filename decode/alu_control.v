@@ -8,10 +8,18 @@
 `define ALU_CONTROL
 
 
-module alu_control(opcode, funct, alu_op);
+module alu_control(clock, opcode, funct, alu_op);
+	// The clock is only used for error reporting / debugging.
+	input wire clock;
 	input wire [5:0] opcode;
 	input wire [5:0] funct;
 	output reg [3:0] alu_op;
+
+	always @(negedge clock) begin
+		if ((opcode == `SPECIAL) && (alu_op === 4'bxxxx) && ($time != 0)) begin
+			$display($time, ": Uknown function code %b", funct);
+		end
+	end
 
 	always @(*) begin
 		case (opcode)
@@ -35,6 +43,7 @@ module alu_control(opcode, funct, alu_op);
 			`LW: alu_op = `ALU_add;
 			`LB: alu_op = `ALU_add;
 			`ADDIU: alu_op = `ALU_add;
+			`ANDI: alu_op = `ALU_AND;
 			`ORI: alu_op = `ALU_OR;
 			`LUI: alu_op = `ALU_slli;	// We're shifting the imm value by 16
 			`SLTI: alu_op = `ALU_slt;

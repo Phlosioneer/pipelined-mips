@@ -154,6 +154,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 
 	// The control unit.
 	control_unit control(
+		.clock (clock),
 		.opcode (opcode),
 		.funct (funct),
 		.instr_shamt (instr_shamt),
