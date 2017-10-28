@@ -48,6 +48,13 @@ module classify(opcode, is_r_type, is_i_type, is_j_type);
 	assign is_j_type = 
 		(opcode == `J) |
 		(opcode == `JAL);
+
+	always @(*) begin
+		if (~(is_r_type | is_i_type | is_j_type)) begin
+			$display($time, ": Unclassified opcode found: %b", opcode);
+		end
+	end
+
 endmodule
 
 
