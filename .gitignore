@@ -24,3 +24,6 @@
 
 # Test file to pipe testbench output when it's too big for stdout.
 out.txt
+
+# GTKWave save files.
+*.gtkw

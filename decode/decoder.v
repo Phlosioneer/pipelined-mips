@@ -28,7 +28,7 @@
 // TODO: Add reg_jump_address for jr instruction.
 module decoder(clock, instruction, pc_plus_four, writeback_value,
 		should_writeback, writeback_id, ra_write, ra_write_value, is_r_type,
-	       	reg_hi_W, reg_lo_W, HasDivW, reg_rs_value,
+	    reg_hi_W, reg_lo_W, HasDivW, reg_rs_value,
 		reg_rt_value, sign_immediate, unsign_immediate, branch_address, jump_address,
 		reg_rs_id, reg_rt_id, reg_rd_id, shamt, funct, opcode,
 		syscall_funct, syscall_param1, reg_hi_D, reg_lo_D);

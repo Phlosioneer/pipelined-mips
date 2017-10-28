@@ -67,6 +67,14 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 	
 	// Internal wires.
 	wire is_r_type;
+	wire is_i_type;
+	wire is_j_type;
+
+	wire blt;
+	wire beq;
+	wire bgt;
+	wire link_reg;
+	wire rt_is_zero;
 
 	wire [5:0] funct;
 	wire [5:0] opcode;
@@ -146,13 +154,19 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.instr_shamt (instr_shamt),
 		.reg_rt_id (reg_rt_id),
 		.is_r_type (is_r_type),
+		.is_i_type (is_i_type),
+		.is_j_type (is_j_type),
 		.reg_write (reg_write_D),
 		.mem_to_reg (mem_to_reg),
 		.mem_write (mem_write),
 		.alu_op (alu_op),
 		.alu_src (alu_src),
 		.reg_dest (reg_dest),
-		.branch_variant (branch_variant),
+		.blt(blt),
+		.beq(beq),
+		.bgt(bgt),
+		.link_reg(link_reg),
+		.rt_is_zero(rt_is_zero),
 		.syscall (syscall),
 		.imm_is_unsigned (imm_is_unsigned),
 		.shamtD (shamtD),
@@ -169,7 +183,14 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.maybe_branch_address (maybe_branch_address),
 		.reg_rs (reg_rs_value),
 		.reg_rt (reg_rt_value),
-		.branch_variant (branch_variant),
+		.blt(blt),
+		.beq(beq),
+		.bgt(bgt),
+		.link_reg(link_reg),
+		.is_r_type(is_r_type),
+		.is_i_type(is_i_type),
+		.is_j_type(is_j_type),
+		.rt_is_zero(rt_is_zero),
 		.jump_address (jump_address),
 		.pc_src (pc_src),
 		.ra_write_value (ra_write_value),

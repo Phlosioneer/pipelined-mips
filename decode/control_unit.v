@@ -10,20 +10,23 @@
 `include "decode/classify.v"
 `include "decode/alu_control.v"
 
-module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
+module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type,
+		is_i_type, is_j_type, reg_write,
 		mem_to_reg, mem_write, alu_op, alu_src, reg_dest,
-		branch_variant, syscall, imm_is_unsigned, shamtD, is_mf_hi, is_mf_lo,
-		HasDivD, IsByteD);
+		syscall, imm_is_unsigned, shamtD, is_mf_hi, is_mf_lo,
+		HasDivD, IsByteD, bgt, beq, blt, rt_is_zero, link_reg);
 
 	input wire [5:0] opcode;
 	input wire [5:0] funct;
 	input wire [4:0] instr_shamt;
 	
-	// This register ID is used like a funct for opcode 0 (called REGIMM)
+	// This register ID is used like a funct for opcode 1 (called REGIMM)
 	input wire [4:0] reg_rt_id;
 
-	// Used by the decoder.
+	// Used by the decoder and jump_unit.
 	output wire is_r_type;
+	output wire is_i_type;
+	output wire is_j_type;
 
 	output wire reg_write;
 	output wire mem_to_reg;
@@ -34,8 +37,6 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 	output wire alu_src;
 	output wire reg_dest;
 
-	output reg [2:0] branch_variant;
-	
 	// Outputs 1 if the current instruction is a syscall, 0 otherwise.
 	output wire syscall;
 
@@ -57,10 +58,16 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 	// 1 if the current instruction is LB or SB.
 	output wire IsByteD;
 
-	// wire is_r_type;	// Declared as an output.
-	wire is_i_type;
-	wire is_j_type;
+	// Branch_control to jump_unit:
+	output wire bgt;	// True if $s > $t causes jump
+	output wire beq;	// True if $s == $t causes jump
+	output wire blt;	// True if $s < $t causes jump
+	output wire link_reg;	// If true, set $ra = $pc
+	output wire [1:0] j_src;	// A code for where to get the jump address
 	
+	// Branch_control to decode stage:
+	output wire rt_is_zero;	// If true, reg_rt_value is set to $zero.
+
 	wire is_shift_op;
 
 	// True if the special opcode requires reg_write. Junk if the current
@@ -116,31 +123,47 @@ module control_unit(opcode, funct, instr_shamt, reg_rt_id, is_r_type, reg_write,
 
 	assign alu_src = is_i_type | is_shift_op;
 
-	always @(*) begin
-		case (opcode)
-			`REGIMM: begin
-			 	if (reg_rt_id == `BLTZ) begin
-			 		branch_variant <= `BV_BLTZ;
-				end else begin
-					branch_variant <= `BV_NONE;
-				end
-			end
-			`J: branch_variant <= `BV_JUMP;
-			`JAL: branch_variant <= `BV_JUMP_LINK;
-			`SPECIAL: begin
-				if (funct == `JR) begin
-			       		branch_variant <= `BV_JUMP_REG;
-				end else begin
-					branch_variant <= `BV_NONE;
-				end
-			end
-			`BEQ: branch_variant <= `BV_BEQ;
-			`BNE: branch_variant <= `BV_BNE;
-			default: branch_variant <= `BV_NONE;
-		endcase
-	end
 	
+	// TODO: Refactor this into a separate branch_control module.
 
+	assign bgt =
+		(opcode == `J) |
+		(opcode == `JAL) |
+		((opcode == `REGIMM) && (funct == `BGEZ)) |
+		((opcode == `REGIMM) && (funct == `BGEZAL)) |
+		(opcode == `BGTZ) |
+		((opcode == `SPECIAL) && (funct == `JR)) |
+		(opcode == `BNE);
+	
+	assign beq =
+		(opcode == `J) |
+		(opcode == `JAL) |
+		((opcode == `SPECIAL) && (funct == `JR)) |
+		(opcode == `BEQ) |
+		(opcode == `BGTZ) |
+		(opcode == `BLEZ) |
+		((opcode == `REGIMM) && (funct == `BGEZAL));
+	
+	assign blt =
+		(opcode == `J) |
+		(opcode == `JAL) |
+		((opcode == `SPECIAL) && (funct == `JR)) |
+		(opcode == `BNE) |
+		(opcode == `BLEZ) |
+		((opcode == `REGIMM) && (funct == `BLTZ)) |
+		((opcode == `REGIMM) && (funct == `BLTZAL));
+
+	assign rt_is_zero =
+		((opcode == `REGIMM) && (funct == `BGEZ)) |
+		((opcode == `REGIMM) && (funct == `BGEZAL)) |
+		((opcode == `REGIMM) && (funct == `BLTZ)) |
+		(opcode == `BGTZ) |
+		(opcode == `BLEZ);
+
+	assign link_reg =
+		((opcode == `REGIMM) && (funct == `BLTZAL)) |
+		((opcode == `REGIMM) && (funct == `BGEZAL)) |
+		(opcode == `JAL);
 
 endmodule
 
