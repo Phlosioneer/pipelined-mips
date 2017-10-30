@@ -384,4 +384,22 @@
 `define JUMP_ADDRESS_UNDEF 31'hxxxx
 
 
+// Define various memory boundaries, in terms of WORD
+// addresses, not byte addresses!
+//
+// Each memory section contains 16kB.
+`define STACK_TOP 32'h1fff_ffff
+`define STACK_BOT 32'h1fff_dfff
+
+`define TEXT_DAT_TOP 32'h0010_1000
+`define TEXT_DAT_BOT 32'h0010_0000
+
+`define IVT_TOP 32'h0001_1000
+`define IVT_BOT 32'h0001_0000
+
+// Defines the location in memory that contains the starting address for execution.
+`define START_ADDR_LOC `TEXT_DAT_BOT
+
+
+
 `endif

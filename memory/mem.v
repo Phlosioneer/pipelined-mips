@@ -11,17 +11,22 @@
 `define TEXT_DAT_TOP 32'h0010_1000
 `define TEXT_DAT_BOT 32'h0010_0000
 
-//`define MEM_VERBOSE
+`define IVT_TOP 32'h0001_1000
+`define IVT_BOT 32'h0001_0000
+
 
 
 module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output reg [31:0] RD);
 	// Old: h'7fff_fffC
   reg [31:0] stack[`STACK_BOT:`STACK_TOP]; // 1k Stack from 7fff_fffc down
-  reg [31:0] text_dat[`TEXT_DAT_BOT:`TEXT_DAT_TOP]; // 2k text... I think?
+  reg [31:0] text_dat[`TEXT_DAT_BOT:`TEXT_DAT_TOP]; // 16kB text
+  reg [31:0] ivt[`IVT_BOT:`IVT_TOP];	// 16kB Interupt Vector Table
 
-  // String
+  // Strings
   reg [99:0] program_name;
+  reg [99:0] ivt_name;
 
+  // Flags
   reg mem_verbose;
 
   // TODO: Integrate with fetch/mem.v
@@ -31,6 +36,12 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
     end else begin
     	$readmemh("program.dat", text_dat);
     end
+
+	if ($value$plusargs("IVT=%s", ivt_name)) begin
+		$readmemh(ivt_name, ivt);
+	end else begin
+		$readmemh("ivt.dat", ivt);
+	end
 
 	if (~$value$plusargs("MEM_VERBOSE=%d", mem_verbose)) begin
 		// If no value is given, assume false.
@@ -57,6 +68,12 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
       	  $display($time, ": Reading from .text address [%h]: %h", text_A, text_dat[text_A]);
         end
       RD <= text_dat[text_A];
+	end else if (text_A <= `IVT_TOP && A <= `IVT_BOT) begin
+		RD <= ivt[text_A];
+
+		if (MemToRegM && mem_verbose) begin
+			$display($time, ": Reading from .ivt address [%h]: %h", text_A, ivt[text_A]);
+		end
     end else begin
       if (MemToRegM && RegWriteM) begin
         $display($time, ": Attempt to read from undefined address %h.", A);
