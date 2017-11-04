@@ -27,3 +27,6 @@ out.txt
 
 # GTKWave save files.
 *.gtkw
+
+# The build directory.
+build/

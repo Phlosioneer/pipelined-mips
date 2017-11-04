@@ -22,7 +22,7 @@ int main(void)
 {
 	char s[BUFFER_SIZE]= {0};
 	int f = fibonacci(6);
-	puts("Result is:");
+	puts("Result is: ");
 	itoa(f, s, BUFFER_SIZE, 10);
 	puts(s);
 	puts("\n");
