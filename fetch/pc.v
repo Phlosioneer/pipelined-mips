@@ -18,7 +18,8 @@ begin
     
     if (~is_init) begin
 	// See readme for the required starting two bytes of the binary.
-    	cur_count <= starting_addr;
+    	//cur_count <= starting_addr;
+		cur_count <= 32'h0040_0000;
 	is_init <= 1;
     end
 end

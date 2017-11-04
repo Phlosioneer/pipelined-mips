@@ -18,6 +18,7 @@ SREC=srec_cat
 
 ASMSOURCE:=$(wildcard $(SRC_DIR)/*.s)
 CSOURCE:=$(wildcard $(SRC_DIR)/*.c)
+SCRIPT_FILE=$(SRC_DIR)/sections.ld
 
 ASMOBJ:=$(ASMSOURCE:.s=.o)
 COBJ:=$(CSOURCE:.c=.o)
@@ -33,9 +34,11 @@ LD=$(MIPSEL)ld
 OBJDUMP=$(MIPSEL)objdump
 
 # these are the flags we need for bare metal code generation
+LDSCRIPT=--script=$(SCRIPT_FILE)
 CFLAGS=-fpic -mno-abicalls -nostdlib -static $(COMMON_CFLAGS)
-LDFLAGS=-L/usr/remote/mipsel/lib/gcc/mipsel-buildroot-linux-uclibc/4.6.3 -lgcc_eh --oformat=srec
+LDFLAGS=-L/usr/remote/mipsel/lib/gcc/mipsel-buildroot-linux-uclibc/4.6.3 -lgcc_eh --oformat=srec $(LDSCRIPT)
 OBJDUMP_FLAGS=-m mips --endian=little
+SREC_FLAGS=-byte-swap 4 -VMem
 
 OBJECTS=$(ASMOBJ:.o=_mips.o) $(COBJ:.o=_mips.o)
 	
@@ -94,7 +97,7 @@ $(GCC_OUTPUT): $(OBJECTS) build_dir
 
 $(VERILOG_OUTPUT): $(GCC_OUTPUT) build_dir
 	# Convert the gcc output SRecord into a Motorola SRecord for mips
-	./vmem_injector.sh $(GCC_OUTPUT) $(VERILOG_OUTPUT)
+	$(SREC) $(GCC_OUTPUT) -byte-swap 4 -o $(VERILOG_OUTPUT) -VMem
 
 $(OBJDUMP_OUTPUT): $(GCC_OUTPUT) build_dir
 	$(OBJDUMP) $(OBJDUMP_FLAGS) -D $< > $@
