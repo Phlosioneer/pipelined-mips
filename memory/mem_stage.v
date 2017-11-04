@@ -99,7 +99,8 @@ module word_masker(input_word, orig_word, index, output_word);
 
 	assign mask = 32'hFF << (index * 8);
 
-	assign pure_byte = mask & input_word;
+	// Only the lowest byte of the input word is used for writing.
+	assign pure_byte = (32'hFF & input_word) << (index * 8);
 
 	assign byteless_word = (~mask) & orig_word;
 
