@@ -35,6 +35,7 @@ module alu_control(clock, opcode, funct, alu_op);
 					`DIV: alu_op = `ALU_div;
 					`MFHI: alu_op = `ALU_rs_pass;
 					`MFLO: alu_op = `ALU_rs_pass;
+					`SLT: alu_op = `ALU_slt;
 					default: alu_op = `ALU_undef;
 				endcase
 			end
