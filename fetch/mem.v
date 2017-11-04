@@ -30,12 +30,15 @@ initial begin
   if ($value$plusargs("DAT=%s", program_name)) begin
     $readmemh(program_name, mem);
   end else begin
+    $display("Error: No program file specified. Use +DAT=<filename> to add one.");
+	$finish;
     $readmemh("program.dat", mem);
   end
 
   if ($value$plusargs("IVT=%s", ivt_name)) begin
   	$readmemh(ivt_name, ivt);
   end else begin
+  	$display("Warning: No IVT ram file specified. Use +IVT=<filename> to add one.");
   	$readmemh("ivt.dat", ivt);
   end
 

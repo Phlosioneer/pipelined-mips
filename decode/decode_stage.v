@@ -18,7 +18,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 
 		reg_write_D, mem_to_reg, mem_write, alu_op, alu_src, reg_dest, pc_src,
 		
-		syscall, syscall_funct, syscall_param1, MfOpInD, HasDivD, IsByteD, BranchD);
+		syscall, syscall_funct, syscall_param1, MfOpInD, HasDivD, IsByteD, BranchD, is_trap);
 
 	input wire clock;
 
@@ -69,6 +69,8 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 
 	// This output is used by the memory stage.
 	output wire IsByteD;
+
+	output wire is_trap;
 	
 	// Internal wires.
 	wire is_r_type;
@@ -179,7 +181,8 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.is_mf_hi (is_mf_hi),
 		.is_mf_lo (is_mf_lo),
 		.HasDivD (HasDivD),
-		.IsByteD(IsByteD)
+		.IsByteD(IsByteD),
+		.is_trap(is_trap)
 		);
 	
 	// The jump decider.
@@ -196,6 +199,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.is_r_type(is_r_type),
 		.is_i_type(is_i_type),
 		.is_j_type(is_j_type),
+		.is_trap(is_trap),
 		.rt_is_zero(rt_is_zero),
 		.jump_address (jump_address),
 		.pc_src (pc_src),

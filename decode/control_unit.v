@@ -14,7 +14,8 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		is_i_type, is_j_type, reg_write,
 		mem_to_reg, mem_write, alu_op, alu_src, reg_dest,
 		syscall, imm_is_unsigned, shamtD, is_mf_hi, is_mf_lo,
-		HasDivD, IsByteD, bgt, beq, blt, rt_is_zero, link_reg);
+		HasDivD, IsByteD, bgt, beq, blt, rt_is_zero, link_reg,
+		is_trap);
 
 	// The clock is only used for error reporting / debugging.
 	input wire clock;
@@ -77,10 +78,19 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	// instruction isn't special.
 	wire reg_write_special;
 
+	// This is true when we need to jump to the Interrupt Vector Table.
+	// Some syscalls and some annoying instructions will cause this.
+	// The hazard unit will disable branch delay slot processing, and the
+	// jump unit will link to 4 less than the usual address. It'll also
+	// go to the start of the IVT, a hard-coded address.
+	output wire is_trap;
+
 	assign regimm = reg_rt_id;
 
 	alu_control alu(clock, opcode, funct, alu_op);
 	classify classifier(clock, opcode, is_r_type, is_i_type, is_j_type);
+
+	assign is_trap = (opcode == `SWL);
 
 	assign is_mf_hi = (opcode == `SPECIAL) && (funct == `MFHI);
 	assign is_mf_lo = (opcode == `SPECIAL) && (funct == `MFLO);
@@ -140,7 +150,8 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		((opcode == `REGIMM) && (regimm == `BGEZAL)) |
 		(opcode == `BGTZ) |
 		((opcode == `SPECIAL) && (funct == `JR)) |
-		(opcode == `BNE);
+		(opcode == `BNE) |
+		is_trap;
 	
 	assign beq =
 		(opcode == `J) |
@@ -149,7 +160,8 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		(opcode == `BEQ) |
 		(opcode == `BGTZ) |
 		(opcode == `BLEZ) |
-		((opcode == `REGIMM) && (regimm == `BGEZAL));
+		((opcode == `REGIMM) && (regimm == `BGEZAL)) |
+		is_trap;
 	
 	assign blt =
 		(opcode == `J) |
@@ -158,7 +170,8 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		(opcode == `BNE) |
 		(opcode == `BLEZ) |
 		((opcode == `REGIMM) && (regimm == `BLTZ)) |
-		((opcode == `REGIMM) && (regimm == `BLTZAL));
+		((opcode == `REGIMM) && (regimm == `BLTZAL)) |
+		is_trap;
 
 	assign rt_is_zero =
 		((opcode == `REGIMM) && (regimm == `BGEZ)) |
@@ -170,7 +183,8 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	assign link_reg =
 		((opcode == `REGIMM) && (regimm == `BLTZAL)) |
 		((opcode == `REGIMM) && (regimm == `BGEZAL)) |
-		(opcode == `JAL);
+		(opcode == `JAL) |
+		is_trap;
 
 endmodule
 

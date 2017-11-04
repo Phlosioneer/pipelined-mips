@@ -105,6 +105,9 @@ module cpu(clock);
     wire IsByteD;
     wire IsByteE;
 
+	wire is_trap;
+	wire FlushD;
+
     //this wire is a mux for ResultW
     wire [31:0] ResultW;
     assign ResultW = MemtoRegW ? ReadDataW : ALUOutW;
@@ -130,13 +133,13 @@ module cpu(clock);
         .instructionf(instructionf)
         );
      fetch_pipeline_reg fpipe(
-       .clock(clock)
-     , .clear(pc_src_d)
-     , .StallD(StallD)
-     , .pc_plus_four_F(pc_plus_4f)
-     , .instruction_F(instructionf)
-     , .pc_plus_four_D(pc_plus_4d)
-     , .instruction_D(instructiond));
+		.clock(clock),
+		.StallD(StallD),
+		.FlushD(FlushD),
+		.pc_plus_four_F(pc_plus_4f),
+		.instruction_F(instructionf),
+		.pc_plus_four_D(pc_plus_4d),
+		.instruction_D(instructiond));
 
     decode_stage decode(
         .clock(clock),
@@ -175,6 +178,7 @@ module cpu(clock);
 		// Control to Hazard
 		.MfOpInD(MfOpInD),
 		.BranchD(BranchD),
+		.is_trap(is_trap),
 
 		// Outputs back to fetch.
 		.pc_src (pc_src_d),
@@ -308,11 +312,14 @@ module cpu(clock);
 	.HasDivE(HasDivE),
 	.HasDivM(HasDivM),
 	.HasDivW(HasDivW),
+	.is_trap(is_trap),
+	.pc_src_d(pc_src_d),
 
 	// Outputs
 	.StallF(StallF),
 	.StallD(StallD),
 	.FlushE(FlushE),
+	.FlushD(FlushD),
 	.ForwardAE(ForwardAE),
 	.ForwardBE(ForwardBE)
 	);

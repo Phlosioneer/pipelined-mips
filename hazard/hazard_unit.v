@@ -9,10 +9,10 @@ module hazard_unit(
 	// Inputs
 	RsD, RtD, BranchD, RsE, RtE, WriteRegE, MemtoRegE, RegWriteE, WriteRegM, 
 	MemtoRegM, RegWriteM, WriteRegW, RegWriteW, syscallD, HasDivE,
-	HasDivM, HasDivW, MfOpInD,
+	HasDivM, HasDivW, MfOpInD, is_trap, pc_src_d,
 
 	// Outputs
-	StallF, StallD, FlushE, ForwardAE, ForwardBE
+	StallF, StallD, FlushE, FlushD, ForwardAE, ForwardBE
 	);
 
 /* Inputs */
@@ -70,6 +70,17 @@ input wire HasDivW;
 // or mflo.
 input wire MfOpInD;
 
+// This is true if the decode stage detects a trap. The trap will cause an
+// unconditional jump to the IVT; the hazard unit needs to disable branch
+// delay slot processing so that it appears like a single operation to the
+// rest of the program.
+input wire is_trap;
+
+// Logic for clearing the Fetch->Decode pipeline reg when pc_src_d is high is
+// moved out of cpu.v and into here.
+// TODO: Grok this code better.
+input wire pc_src_d;
+
 /* Outputs */
 
 // This flag is high when the Fetch stage needs to stall.
@@ -85,7 +96,12 @@ output wire StallD;
 //output wire ForwardBD;
 
 // True when the Execute stage needs to be flushed.
+// TODO: Inverted?
 output wire FlushE;
+
+// True when the Fetch stage needs to be flushed.
+// TODO: Inverted?
+output wire FlushD;
 
 // 1 for MEM/EX forwarding; 2 for EX/EX forwarding of Rs.
 output wire [1:0] ForwardAE;
@@ -160,6 +176,11 @@ assign StallD = !(branchStall || lwStall || stallSyscall || stallMfOp);
 
 // Flush when either stall signal has been set
 assign FlushE = !(branchStall || lwStall || stallSyscall || stallMfOp);
+
+// Flush the instruction being sent to the decode stage if a trap is detected.
+// This is used to turn the instruction after a trap into a NOP, to prevent
+// branch delay slot behavior.
+assign FlushD = !(is_trap) || pc_src_d;
 
 // Assign EX/EX or MEM/EX forwarding of Rs as appropriate
 assign ForwardAE = ((RsE != 0) && (RsE == WriteRegM) && RegWriteM)  ? 2'b10 : // EX/EX

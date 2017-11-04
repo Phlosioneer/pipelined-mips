@@ -9,6 +9,7 @@
 // modules, and decides whether to jump and where to jump.
 module jump_unit(pc_plus_four, maybe_jump_address, maybe_branch_address,
 		reg_rs, reg_rt, blt, beq, bgt, link_reg, rt_is_zero, is_r_type, is_i_type, is_j_type,
+		is_trap,
 		jump_address, pc_src, branch, ra_write, ra_write_value);
 	
 	// The current PC, used for jump and link.
@@ -45,6 +46,11 @@ module jump_unit(pc_plus_four, maybe_jump_address, maybe_branch_address,
 	input wire is_r_type;
 	input wire is_i_type;
 	input wire is_j_type;
+
+	// If this is a trap, the linked address needs to be 4 bytes less
+	// than usual, to the instruction that would normally be considered
+	// a branch display slot.
+	input wire is_trap;
 	
 	// The actual jump address.
 	output wire [31:0] jump_address;
@@ -61,7 +67,6 @@ module jump_unit(pc_plus_four, maybe_jump_address, maybe_branch_address,
 
 	// This is the value to write to the ra register, if needed.
 	output wire [31:0] ra_write_value;
-
 	
 	// This is the register containing the value to jump to if the
 	// instruction is JUMP_REG.
@@ -79,7 +84,7 @@ module jump_unit(pc_plus_four, maybe_jump_address, maybe_branch_address,
 	
 	assign ra_write = pc_src && link_reg;
 
-	assign ra_write_value = pc_plus_four;
+	assign ra_write_value = is_trap ? pc_plus_four - 1 : pc_plus_four;
     
     // Determine pc_src.
 	assign pc_src =
@@ -89,9 +94,10 @@ module jump_unit(pc_plus_four, maybe_jump_address, maybe_branch_address,
 	
 	// Determine the end jump address.
 	assign jump_address =
+		is_trap ? `IVT_BOT : (
 		is_r_type ? jump_reg_address : (
 		is_i_type ? maybe_branch_address : (
-		is_j_type ? maybe_jump_address : 32'hxxxx_xxxx));
+		is_j_type ? maybe_jump_address : 32'hxxxx_xxxx)));
 	
 
 endmodule
