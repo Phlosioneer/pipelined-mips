@@ -26,9 +26,6 @@ COBJ:=$(CSOURCE:.c=.o)
 ASMOBJ:=$(subst $(SRC_DIR),$(BUILD_DIR),$(ASMOBJ))
 COBJ:=$(subst $(SRC_DIR),$(BUILD_DIR),$(COBJ))
 
-$(info asmobj is [$(ASMOBJ)])
-$(info cobj is [$(COBJ)])
-
 GCC=$(MIPSEL)gcc
 LD=$(MIPSEL)ld
 OBJDUMP=$(MIPSEL)objdump
@@ -63,7 +60,7 @@ PROGRAM_DAT_NAME=program.dat
 PROGRAM_DAT=$(BUILD_DIR)/$(PROGRAM_DAT_NAME)
 OUTPUT=$(BIN_OUTPUT) $(GCC_OUTPUT) $(VERILOG_OUTPUT) $(D_BIN_OUTPUT) $(OBJDUMP_OUTPUT) $(TESTBENCH_OUTPUT) $(PROGRAM_DAT)
 
-.PHONY: all, debug, run, build_dir
+.PHONY: all, debug, run
 
 VERILOG_WARNS=-Wimplicit -Wportbind
 VERILOG_VERSION=-g2005
@@ -73,44 +70,51 @@ all: $(OUTPUT)
 debug: $(D_BIN_OUTPUT)
 	./$(D_BIN_OUTPUT)
 
-build_dir:
-	mkdir -p $(BUILD_DIR)
-
 run: $(TESTBENCH_OUTPUT) $(PROGRAM_DAT)
 	cd $(BUILD_DIR) ; ./$(TESTBENCH_OUTPUT_NAME) +DAT=$(PROGRAM_DAT_NAME)
 
-$(PROGRAM_DAT): $(VERILOG_OUTPUT) build_dir
+$(PROGRAM_DAT): $(VERILOG_OUTPUT)
+	mkdir -p $(BUILD_DIR)
 	cp $(VERILOG_OUTPUT) $(PROGRAM_DAT)
 
-$(TESTBENCH_OUTPUT): build_dir
+$(TESTBENCH_OUTPUT):
+	mkdir -p $(BUILD_DIR)
 	iverilog testbench.v -o $@ $(VERILOG_WARNS) $(VERILOG_VERSION)
 
-$(D_BIN_OUTPUT): $(D_OBJECTS) build_dir
+$(D_BIN_OUTPUT): $(D_OBJECTS)
+	mkdir -p $(BUILD_DIR)
 	$(D_LD) $(D_LDFLAGS) $(D_OBJECTS) -o $(D_BIN_OUTPUT)
 
-$(BIN_OUTPUT): $(OBJECTS) build_dir
+$(BIN_OUTPUT): $(OBJECTS)
+	mkdir -p $(BUILD_DIR)
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $(BIN_OUTPUT)
 
-$(GCC_OUTPUT): $(OBJECTS) build_dir
+$(GCC_OUTPUT): $(OBJECTS)
+	mkdir -p $(BUILD_DIR)
 	# Link to an SRecord
 	$(LD) $(LDFLAGS) $(OBJECTS) -o $(GCC_OUTPUT)
 
-$(VERILOG_OUTPUT): $(GCC_OUTPUT) build_dir
+$(VERILOG_OUTPUT): $(GCC_OUTPUT)
+	mkdir -p $(BUILD_DIR)
 	# Convert the gcc output SRecord into a Motorola SRecord for mips
 	$(SREC) $(GCC_OUTPUT) -byte-swap 4 -o $(VERILOG_OUTPUT) -VMem
 
-$(OBJDUMP_OUTPUT): $(GCC_OUTPUT) build_dir
+$(OBJDUMP_OUTPUT): $(GCC_OUTPUT)
+	mkdir -p $(BUILD_DIR)
 	$(OBJDUMP) $(OBJDUMP_FLAGS) -D $< > $@
 
-$(BUILD_DIR)/%_mips.o: $(SRC_DIR)/%.c build_dir
+$(BUILD_DIR)/%_mips.o: $(SRC_DIR)/%.c
+	mkdir -p $(BUILD_DIR)
 	# compile C to object files as usual
 	$(GCC) -c $(CFLAGS) $< -o $@
 
-$(BUILD_DIR)/%_mips.o: $(SRC_DIR)/%.s build_dir
+$(BUILD_DIR)/%_mips.o: $(SRC_DIR)/%.s
+	mkdir -p $(BUILD_DIR)
 	# assemble to a motorola srecord file
 	$(AS) $< -o $@
 
-$(BUILD_DIR)/%_debug.o: $(SRC_DIR)/%.c build_dir
+$(BUILD_DIR)/%_debug.o: $(SRC_DIR)/%.c
+	mkdir -p $(BUILD_DIR)
 	$(D_GCC) -c $(D_CFLAGS) $< -o $@
 
 clean:
