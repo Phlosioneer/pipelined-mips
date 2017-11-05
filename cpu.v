@@ -116,18 +116,18 @@ module cpu(clock);
     wire BranchD;
 
     fetch fetch(
-        .clk(clock),
+        .clock(clock),
         
         // Inputs from decode and control.
         .pc_branch_d(pc_branch_d),
-        .pcsrc_d(pc_src_d),
+        .pc_src_d(pc_src_d),
         
         // Inputs from the hazard unit.
-        .stallf(StallF),
+        .stall_f(StallF),
 
         // Outputs to the decode stage.
-        .pc_plus_4f(pc_plus_4f),
-        .instructionf(instructionf)
+        .pc_plus_4_f(pc_plus_4f),
+        .instruction_f(instructionf)
         );
      fetch_pipeline_reg fpipe(
        .clock(clock)
