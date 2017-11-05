@@ -1,25 +1,25 @@
 `ifndef PC_V
 `define PC_V
 
-module program_counter(clock, stallf, next_count, starting_addr, cur_count);
+module program_counter(clock, stall_f, next_count, starting_addr, curr_count);
 	input [31:0] next_count;
-	input stallf;
+	input stall_f;
 	input clock;
 	input[31:0] starting_addr;
-	output reg [31:0] cur_count;
+	output reg [31:0] curr_count;
 
 	reg is_init;
 
 	always @(posedge clock)
 		begin
-		if(stallf==1) begin
-			cur_count <= next_count;
+		if(stall_f == 1) begin
+			curr_count <= next_count;
 		end
     
 		if (~is_init) begin
 			// See readme for the required starting two bytes of the binary.
 			//cur_count <= starting_addr;
-			cur_count <= 32'h0040_0000;
+			curr_count <= 32'h0040_0000;
 			is_init <= 1;
 		end
 	end

@@ -2,10 +2,10 @@
 `ifndef FETCH_MEM_H
 `define FETCH_MEM_H
 
-module instr_memory(clock, readAddress, memInstruction, start_addr);
+module instr_memory(clock, read_address, mem_instruction, start_addr);
 	input clock;
-	input [31:0] readAddress; 
-	output [31:0] memInstruction;
+	input [31:0] read_address; 
+	output [31:0] mem_instruction;
 	output [31:0] start_addr;
 
 	reg [31:0] mem [32'h0010_0000:32'h0010_1000];
@@ -30,7 +30,7 @@ module instr_memory(clock, readAddress, memInstruction, start_addr);
 
 	// -4 to account for the 1 cycle stall at the start of the simulation.
 	assign start_addr = mem[32'h0010_0000];
-	assign memInstruction = is_init ? mem[readAddress >> 2] : 0;
+	assign mem_instruction = is_init ? mem[read_address >> 2] : 0;
 endmodule
 
 `endif
