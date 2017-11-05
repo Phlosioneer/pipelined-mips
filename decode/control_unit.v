@@ -3,10 +3,8 @@
 `ifndef CONTROL_UNIT
 `define CONTROL_UNIT
 
-`ifndef MIPS_H
 `include "mips.h"
-`endif
-
+`include "decode/jump_control.v"
 `include "decode/classify.v"
 `include "decode/alu_control.v"
 
@@ -66,7 +64,6 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	output wire beq;	// True if $s == $t causes jump
 	output wire blt;	// True if $s < $t causes jump
 	output wire link_reg;	// If true, set $ra = $pc
-	output wire [1:0] j_src;	// A code for where to get the jump address
 	
 	// Branch_control to decode stage:
 	output wire rt_is_zero;	// If true, reg_rt_value is set to $zero.
@@ -130,47 +127,7 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 
 	assign alu_src = is_i_type | is_shift_op;
 
-	
-	// TODO: Refactor this into a separate branch_control module.
-
-	assign bgt =
-		(opcode == `J) |
-		(opcode == `JAL) |
-		((opcode == `REGIMM) && (regimm == `BGEZ)) |
-		((opcode == `REGIMM) && (regimm == `BGEZAL)) |
-		(opcode == `BGTZ) |
-		((opcode == `SPECIAL) && (funct == `JR)) |
-		(opcode == `BNE);
-	
-	assign beq =
-		(opcode == `J) |
-		(opcode == `JAL) |
-		((opcode == `SPECIAL) && (funct == `JR)) |
-		(opcode == `BEQ) |
-		(opcode == `BGTZ) |
-		(opcode == `BLEZ) |
-		((opcode == `REGIMM) && (regimm == `BGEZAL));
-	
-	assign blt =
-		(opcode == `J) |
-		(opcode == `JAL) |
-		((opcode == `SPECIAL) && (funct == `JR)) |
-		(opcode == `BNE) |
-		(opcode == `BLEZ) |
-		((opcode == `REGIMM) && (regimm == `BLTZ)) |
-		((opcode == `REGIMM) && (regimm == `BLTZAL));
-
-	assign rt_is_zero =
-		((opcode == `REGIMM) && (regimm == `BGEZ)) |
-		((opcode == `REGIMM) && (regimm == `BGEZAL)) |
-		((opcode == `REGIMM) && (regimm == `BLTZ)) |
-		(opcode == `BGTZ) |
-		(opcode == `BLEZ);
-
-	assign link_reg =
-		((opcode == `REGIMM) && (regimm == `BLTZAL)) |
-		((opcode == `REGIMM) && (regimm == `BGEZAL)) |
-		(opcode == `JAL);
+	jump_control jump_control(opcode, funct, regimm, bgt, beq, blt, rt_is_zero, link_reg);	
 
 endmodule
 
