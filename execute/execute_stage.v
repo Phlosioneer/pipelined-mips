@@ -128,7 +128,7 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	output wire [4:0] rd_id_e;
 
 	// The sign-extended immediate value.
-	wire [31:0] SignImmE;
+	wire [31:0] sign_imm_e;
 
 	/*** The following outputs are generated internal to the execute stage ***/
 
@@ -158,12 +158,12 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	wire [31:0] SrcBE; // Note: Not a top-level output from the EX stage
 
 	// The execute stage's shift immediate value
-	wire [4:0] shamtE;
+	wire [4:0] shamt_e;
 
 	// Logic for the syscall unit.
-	wire syscallE;
-	wire [31:0] syscall_functE;
-	wire [31:0] syscall_param1E;
+	wire syscall_e;
+	wire [31:0] syscall_funct_e;
+	wire [31:0] syscall_param_1_e;
 
 	// Instantiate all muxes, the ALU, and the EX pipeline register
 
@@ -200,30 +200,30 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 		.rs_id_e(rs_id_e),
 		.rt_id_e(rt_id_e),
 		.rd_id_e(rd_id_e),
-		.SignImmE(SignImmE),
-		.shamtE(shamtE),
-		.syscallE(syscallE),
-		.syscall_functE(syscall_functE),
-		.syscall_param1E(syscall_param1E),
+		.sign_imm_e(sign_imm_e),
+		.shamt_e(shamt_e),
+		.syscall_e(syscall_e),
+		.syscall_funct_e(syscall_funct_e),
+		.syscall_param_1_e(syscall_param_1_e),
 		.HasDivE(HasDivE),
 		.IsByteE(IsByteE));
 
 	mux5_2 write_reg_mux(rd_id_e, rt_id_e, reg_dest_e, WriteRegE);
 	mux32_3 write_data_mux(rt_value_e, ResultW, mem_to_ex_value, ForwardBE, WriteDataE);
 	mux32_3 srcA_mux(rs_value_e, ResultW, mem_to_ex_value, ForwardAE, SrcAE);
-	mux32_2 srcB_mux(SignImmE, WriteDataE, alu_src_e, SrcBE);
+	mux32_2 srcB_mux(sign_imm_e, WriteDataE, alu_src_e, SrcBE);
 
 	alu myALU(
 		.l_value(SrcAE),
 		.r_value(SrcBE),
 		.alu_op(alu_op_e),
-		.shamt(shamtE),
+		.shamt(shamt_e),
 		.result(ALUOutE),
 		.div_hi(DivHiE),
 		.div_lo(DivLoE)
 		);
 	
-	syscall_unit syscall_unit(syscallE, syscall_functE, syscall_param1E);
+	syscall_unit syscall_unit(syscall_e, syscall_funct_e, syscall_param_1_e);
 
 endmodule
 `endif
