@@ -1,10 +1,8 @@
-`ifndef MIPS_H
-`include "mips.h"
-`endif
 
 `ifndef EXECUTE_STAGE
 `define EXECUTE_STAGE
 
+`include "mips.h"
 `include "execute/alu.v"
 `include "execute/execute_pipeline_reg.v"
 `include "execute/syscall_unit.v"
@@ -215,7 +213,15 @@ module execute_stage(clk, FlushE, RegWriteD, MemtoRegD, MemWriteD, ALUControlD,
 	mux32_3 srcA_mux(RD1E, ResultW, ALUOutM, ForwardAE, SrcAE);
 	mux32_2 srcB_mux(SignImmE, WriteDataE, ALUSrcE, SrcBE);
 
-	alu myALU(SrcAE, SrcBE, ALUControlE, shamtE, ALUOutE, DivHiE, DivLoE);
+	alu myALU(
+		.l_value(SrcAE),
+		.r_value(SrcBE),
+		.alu_op(ALUControlE),
+		.shamt(shamtE),
+		.result(ALUOutE),
+		.div_hi(DivHiE),
+		.div_lo(DivLoE)
+		);
 	
 	syscall_unit syscall_unit(syscallE, syscall_functE, syscall_param1E);
 
