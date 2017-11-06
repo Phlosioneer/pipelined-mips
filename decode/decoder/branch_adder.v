@@ -1,6 +1,6 @@
 
-`ifndef BRANCH_ADDER
-`define BRANCH_ADDER
+`ifndef BRANCH_ADDER_V
+`define BRANCH_ADDER_V
 
 // This module takes in the immediate value in a branch instruction, and the
 // next PC address (current PC address + 4), and outputs the target PC address

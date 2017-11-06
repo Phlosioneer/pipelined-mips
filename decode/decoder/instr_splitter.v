@@ -1,6 +1,6 @@
 
-`ifndef INSTR_SPLITTER
-`define INSTR_SPLITTER
+`ifndef INSTR_SPLITTER_V
+`define INSTR_SPLITTER_V
 
 // This is a convenience module that extracts the opcode from a given
 // instruction. It contains no state.

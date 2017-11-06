@@ -1,7 +1,7 @@
 
 
-`ifndef CONTROL_UNIT
-`define CONTROL_UNIT
+`ifndef CONTROL_UNIT_V
+`define CONTROL_UNIT_V
 
 `include "mips.h"
 `include "decode/control/jump_control.v"

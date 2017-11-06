@@ -1,6 +1,6 @@
 
-`ifndef JUMP_CALCULATOR
-`define JUMP_CALCULATOR
+`ifndef JUMP_CALCULATOR_V
+`define JUMP_CALCULATOR_V
 
 // This module calculates the jump address given the next pc (current pc + 4)
 // and the raw address encoded in the JMP instruction.

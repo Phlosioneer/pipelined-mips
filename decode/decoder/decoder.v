@@ -1,8 +1,8 @@
 
 
 
-`ifndef DECODER
-`define DECODER
+`ifndef DECODER_V
+`define DECODER_V
 
 `include "decode/decoder/reg_file.v"
 `include "decode/decoder/instr_splitter.v"

@@ -1,6 +1,6 @@
 
-`ifndef REG_FILE
-`define REG_FILE
+`ifndef REG_FILE_V
+`define REG_FILE_V
 
 `include "register/register.v"
 

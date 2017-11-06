@@ -3,7 +3,7 @@
 `ifndef JUMP_CONTROL_V
 `define JUMP_CONTROL_V
 
-
+`include "mips.h"
 
 module jump_control(opcode, funct, regimm, bgt, beq, blt, rt_is_zero, link_reg);
 	input wire [5:0] opcode;

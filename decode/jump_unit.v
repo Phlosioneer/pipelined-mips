@@ -1,7 +1,7 @@
 
 
-`ifndef JUMP_UNIT
-`define JUMP_UNIT
+`ifndef JUMP_UNIT_V
+`define JUMP_UNIT_V
 
 `include "mips.h"
 

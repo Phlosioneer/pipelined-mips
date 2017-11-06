@@ -1,12 +1,11 @@
 
 
 
-`ifndef MIPS_H
-`include "mips.h"
-`endif
 
-`ifndef CLASSIFY
-`define CLASSIFY
+`ifndef CLASSIFY_V
+`define CLASSIFY_V
+
+`include "mips.h"
 
 module classify(clock, opcode, is_r_type, is_i_type, is_j_type);
 	// The clock is only used for error reporting / debugging.

@@ -1,12 +1,10 @@
 
 
-`ifndef MIPS_H
+
+`ifndef ALU_CONTROL_V
+`define ALU_CONTROL_V
+
 `include "mips.h"
-`endif
-
-`ifndef ALU_CONTROL
-`define ALU_CONTROL
-
 
 module alu_control(clock, opcode, funct, alu_op);
 	// The clock is only used for error reporting / debugging.

@@ -1,8 +1,8 @@
 
 
 
-`ifndef DECODE_STAGE
-`define DECODE_STAGE
+`ifndef DECODE_STAGE_V
+`define DECODE_STAGE_V
 
 `include "decode/decoder/decoder.v"
 `include "decode/control/control_unit.v"
