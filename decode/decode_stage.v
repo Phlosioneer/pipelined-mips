@@ -4,8 +4,8 @@
 `ifndef DECODE_STAGE
 `define DECODE_STAGE
 
-`include "decode/decoder.v"
-`include "decode/control_unit.v"
+`include "decode/decoder/decoder.v"
+`include "decode/control/control_unit.v"
 `include "decode/jump_unit.v"
 `include "hazard/hazard_unit.v"
 `include "decode/mf_unit.v"

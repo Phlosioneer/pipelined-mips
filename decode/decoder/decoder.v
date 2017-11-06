@@ -4,10 +4,10 @@
 `ifndef DECODER
 `define DECODER
 
-`include "decode/reg_file.v"
-`include "decode/instr_splitter.v"
-`include "decode/branch_adder.v"
-`include "decode/jump_calculator.v"
+`include "decode/decoder/reg_file.v"
+`include "decode/decoder/instr_splitter.v"
+`include "decode/decoder/branch_adder.v"
+`include "decode/decoder/jump_calculator.v"
 
 // This module encapsulates the entire decode stage.
 // 

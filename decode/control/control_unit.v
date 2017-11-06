@@ -4,9 +4,9 @@
 `define CONTROL_UNIT
 
 `include "mips.h"
-`include "decode/jump_control.v"
-`include "decode/classify.v"
-`include "decode/alu_control.v"
+`include "decode/control/jump_control.v"
+`include "decode/control/classify.v"
+`include "decode/control/alu_control.v"
 
 module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		is_i_type, is_j_type, reg_write,
