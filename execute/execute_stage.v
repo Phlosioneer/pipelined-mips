@@ -14,8 +14,8 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	is_syscall_d, syscall_funct_d, syscall_param_1_d, has_div_d, is_byte_d,
 	reg_write_e, mem_to_reg_e, mem_write_e, reg_dest_e,
 	rs_id_e, rt_id_e, rd_id_e,
-	ResultW, mem_to_ex_value, ForwardAE, ForwardBE,
-	WriteRegE, WriteDataE, ALUOutE, DivHiE, DivLoE, HasDivE, IsByteE);
+	mem_to_ex_value, ex_to_ex_value, ForwardAE, ForwardBE,
+	WriteRegE, WriteDataE, ALUOutE, DivHiE, DivLoE, has_div_e, is_byte_e);
 
 	// The clock.
 	input wire clock;
@@ -69,10 +69,10 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	/*** The following inputs are fed from elsewhere ***/
 
 	// The chosen value to write (may be ALU output or from data memory).
-	input wire [31:0] ResultW;
+	input wire [31:0] mem_to_ex_value;
 
 	// The output of the ALU after it has passed through the Memory pipeline reg.
-	input wire [31:0] mem_to_ex_value;
+	input wire [31:0] ex_to_ex_value;
 
 	// The input to the mux (from Hazard Unit) that determines SrcAE.
 	input wire [1:0] ForwardAE;
@@ -144,9 +144,9 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 
 	// This is 1 if the outputs of a divide instruction are being written
 	// to the registers; 0 otherwise.
-	output wire HasDivE;
+	output wire has_div_e;
 
-	output wire IsByteE;
+	output wire is_byte_e;
 
 	// The 32-bit output from the ALU.
 	output wire [31:0] ALUOutE;
@@ -205,12 +205,12 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 		.syscall_e(syscall_e),
 		.syscall_funct_e(syscall_funct_e),
 		.syscall_param_1_e(syscall_param_1_e),
-		.HasDivE(HasDivE),
-		.IsByteE(IsByteE));
+		.has_div_e(has_div_e),
+		.is_byte_e(is_byte_e));
 
 	mux5_2 write_reg_mux(rd_id_e, rt_id_e, reg_dest_e, WriteRegE);
-	mux32_3 write_data_mux(rt_value_e, ResultW, mem_to_ex_value, ForwardBE, WriteDataE);
-	mux32_3 srcA_mux(rs_value_e, ResultW, mem_to_ex_value, ForwardAE, SrcAE);
+	mux32_3 write_data_mux(rt_value_e, mem_to_ex_value, ex_to_ex_value, ForwardBE, WriteDataE);
+	mux32_3 srcA_mux(rs_value_e, mem_to_ex_value, ex_to_ex_value, ForwardAE, SrcAE);
 	mux32_2 srcB_mux(sign_imm_e, WriteDataE, alu_src_e, SrcBE);
 
 	alu myALU(

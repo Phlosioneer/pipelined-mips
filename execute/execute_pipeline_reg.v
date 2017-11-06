@@ -13,7 +13,7 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write
 	is_syscall_d, syscall_funct_d, syscall_param_1_d, has_div_d, is_byte_d,
 	reg_write_e, mem_to_reg_e, mem_write_e, alu_op_e, alu_src_e, reg_dest_e,
 	rs_value_e, rt_value_e, rs_id_e, rt_id_e, rd_id_e, sign_imm_e, shamt_e, syscall_e, syscall_funct_e, syscall_param_1_e,
-	HasDivE, IsByteE);
+	has_div_e, is_byte_e);
 
 	// The clock.
 	input wire clock;
@@ -122,9 +122,9 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write
 	// The sign extend
 	output wire [4:0] shamt_e;
 
-    output wire HasDivE;
+    output wire has_div_e;
 
-	output wire IsByteE;
+	output wire is_byte_e;
 
  	// 1-bit values to propagate
  	pipeline_reg_1bit reg_write(clock, !flush_e, reg_write_d, reg_write_e);
@@ -133,8 +133,8 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write
  	pipeline_reg_1bit alu_src(clock, !flush_e, alu_src_d, alu_src_e);
  	pipeline_reg_1bit reg_dst(clock, !flush_e, reg_dest_d, reg_dest_e);
 	pipeline_reg_1bit syscall(clock, !flush_e, is_syscall_d, syscall_e);
-	pipeline_reg_1bit HasDiv(clock, !flush_e, has_div_d, HasDivE);
-	pipeline_reg_1bit IsByte(clock, !flush_e, is_byte_d, IsByteE);
+	pipeline_reg_1bit HasDiv(clock, !flush_e, has_div_d, has_div_e);
+	pipeline_reg_1bit IsByte(clock, !flush_e, is_byte_d, is_byte_e);
  
  	// 5-bit values to propagate
  	pipeline_reg_5bit rs(clock, !flush_e, rs_id_d, rs_id_e);

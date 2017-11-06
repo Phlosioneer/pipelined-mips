@@ -211,7 +211,8 @@ module cpu(clock);
 		.syscall_param_1_d(syscall_param1D),
 		.has_div_d(HasDivD),
 		.is_byte_d(IsByteD),
-		.mem_to_ex_value(ALUOutM),
+		.ex_to_ex_value(ALUOutM),
+        .mem_to_ex_value(ResultW),
 
         // Output to the mem stage.
         .reg_write_e(RegWriteE),
@@ -221,11 +222,10 @@ module cpu(clock);
         .rs_id_e(RsE),
         .rt_id_e(RtE),
         .rd_id_e(RdE),
-        .ResultW(ResultW),
-		.HasDivE(HasDivE),
+		.has_div_e(HasDivE),
 		.DivHiE(DivHiE),
 		.DivLoE(DivLoE),
-		.IsByteE(IsByteE),
+		.is_byte_e(IsByteE),
 
         // Input from the hazard unit.
         .ForwardAE(ForwardAE),
