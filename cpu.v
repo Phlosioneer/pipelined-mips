@@ -195,9 +195,9 @@ module cpu(clock);
         // Input from the decode stage.
         .reg_write_d(RegWriteD),
         .mem_to_reg_d(MemtoRegD),
-        .MemWriteD(MemWriteD),
-        .ALUControlD(ALUControlD),
-        .ALUSrcD(ALUSrcD),
+        .mem_write_d(MemWriteD),
+        .alu_op_d(ALUControlD),
+        .alu_src_d(ALUSrcD),
         .RegDstD(RegDstD),
         .RD1D(RD1D),
         .RD2D(RD2D),

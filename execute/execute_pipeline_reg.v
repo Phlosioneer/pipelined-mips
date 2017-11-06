@@ -8,8 +8,8 @@
 `include "register/pipeline_reg.v"
 
 // This module encapsulates the entire execute pipeline register.
-module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, MemWriteD, ALUControlD,
-	ALUSrcD, RegDstD, RD1D, RD2D, RsD, RtD, RdD, SignImmD, shamtD,
+module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu_op_d,
+	alu_src_d, RegDstD, RD1D, RD2D, RsD, RtD, RdD, SignImmD, shamtD,
 	syscallD, syscall_functD, syscall_param1D, HasDivD, IsByteD,
 	RegWriteE, MemtoRegE, MemWriteE, ALUControlE, ALUSrcE, RegDstE,
 	RD1E, RD2E, RsE, RtE, RdE, SignImmE, shamtE, syscallE, syscall_functE, syscall_param1E,
@@ -32,13 +32,13 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, MemWriteD
 	input wire mem_to_reg_d;
 
 	// The control signal denoting whether main memory is being written to.
-	input wire MemWriteD;
+	input wire mem_write_d;
 
 	// The four-bit ALU op denoting which operation the ALU should perform.
-	input wire [3:0] ALUControlD;
+	input wire [3:0] alu_op_d;
 
 	// The control signal denoting whether the ALU input is an immediate value.
-	input wire ALUSrcD;
+	input wire alu_src_d;
 
 	// The control signal denoting whether the write reg is rd (R-type instr).
 	input wire RegDstD;
@@ -129,8 +129,8 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, MemWriteD
  	// 1-bit values to propagate
  	pipeline_reg_1bit reg_write(clock, !flush_e, reg_write_d, RegWriteE);
  	pipeline_reg_1bit mem_to_reg(clock, !flush_e, mem_to_reg_d, MemtoRegE);
- 	pipeline_reg_1bit mem_write(clock, !flush_e, MemWriteD, MemWriteE);
- 	pipeline_reg_1bit alu_src(clock, !flush_e, ALUSrcD, ALUSrcE);
+ 	pipeline_reg_1bit mem_write(clock, !flush_e, mem_write_d, MemWriteE);
+ 	pipeline_reg_1bit alu_src(clock, !flush_e, alu_src_d, ALUSrcE);
  	pipeline_reg_1bit reg_dst(clock, !flush_e, RegDstD, RegDstE);
 	pipeline_reg_1bit syscall(clock, !flush_e, syscallD, syscallE);
 	pipeline_reg_1bit HasDiv(clock, !flush_e, HasDivD, HasDivE);
@@ -149,7 +149,7 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, MemWriteD
 	pipeline_reg syscall_funct(clock, !flush_e, syscall_functD, syscall_functE);
 	pipeline_reg syscall_param1(clock, !flush_e, syscall_param1D, syscall_param1E);
 
- 	pipeline_reg_4bit alu_control(clock, !flush_e, ALUControlD, ALUControlE);
+ 	pipeline_reg_4bit alu_control(clock, !flush_e, alu_op_d, ALUControlE);
 	
 
 endmodule

@@ -9,8 +9,8 @@
 `include "util.v"
 
 // This module encapsulates the entire execute stage.
-module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, MemWriteD, ALUControlD,
-	ALUSrcD, RegDstD, RD1D, RD2D, RsD, RtD, RdD, SignImmD, shamtD,
+module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu_op_d,
+	alu_src_d, RegDstD, RD1D, RD2D, RsD, RtD, RdD, SignImmD, shamtD,
 	syscallD, syscall_functD, syscall_param1D, HasDivD, IsByteD,
 	RegWriteE, MemtoRegE, MemWriteE, RegDstE, ALUControlE,
 	RD1E, RD2E, RsE, RtE, RdE, SignImmE, 
@@ -34,13 +34,13 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, MemWriteD, ALUCo
 	input wire mem_to_reg_d;
 
 	// The control signal denoting whether main memory is being written to.
-	input wire MemWriteD;
+	input wire mem_write_d;
 
 	// The four-bit ALU op denoting which operation the ALU should perform.
-	input wire [3:0] ALUControlD;
+	input wire [3:0] alu_op_d;
 
 	// The control signal denoting whether the ALU input is an immediate value.
-	input wire ALUSrcD;
+	input wire alu_src_d;
 
 	// The control signal denoting whether the write reg is rd (R-type instr).
 	input wire RegDstD;
@@ -172,9 +172,9 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, MemWriteD, ALUCo
 		.flush_e(flush_e), 
 		.reg_write_d(reg_write_d),
 		.mem_to_reg_d(mem_to_reg_d),
-		.MemWriteD(MemWriteD),
-		.ALUControlD(ALUControlD),
-		.ALUSrcD(ALUSrcD),
+		.mem_write_d(mem_write_d),
+		.alu_op_d(alu_op_d),
+		.alu_src_d(alu_src_d),
 		.RegDstD(RegDstD),
 		.RD1D(RD1D),
 		.RD2D(RD2D),
