@@ -11,8 +11,8 @@
 module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		is_i_type, is_j_type, reg_write,
 		mem_to_reg, mem_write, alu_op, alu_src, reg_dest,
-		syscall, imm_is_unsigned, shamtD, is_mf_hi, is_mf_lo,
-		HasDivD, IsByteD, bgt, beq, blt, rt_is_zero, link_reg);
+		syscall, imm_is_unsigned, shamt_d, is_mf_hi, is_mf_lo,
+		has_div_d, is_byte_d, bgt, beq, blt, rt_is_zero, link_reg);
 
 	// The clock is only used for error reporting / debugging.
 	input wire clock;
@@ -45,7 +45,7 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	// value; 1 otherwise.
 	output wire imm_is_unsigned;
 	
-	output wire [4:0] shamtD;
+	output wire [4:0] shamt_d;
 
 	// 1 if the current instruction is MFHI, 0 otherwise.
 	output wire is_mf_hi;
@@ -54,10 +54,10 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	output wire is_mf_lo;
 
 	// 1 if the current instruction is divide.
-	output wire HasDivD;
+	output wire has_div_d;
 
 	// 1 if the current instruction is LB or SB.
-	output wire IsByteD;
+	output wire is_byte_d;
 
 	// Branch_control to jump_unit:
 	output wire bgt;	// True if $s > $t causes jump
@@ -82,9 +82,9 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 	assign is_mf_hi = (opcode == `SPECIAL) && (funct == `MFHI);
 	assign is_mf_lo = (opcode == `SPECIAL) && (funct == `MFLO);
 
-	assign HasDivD = (opcode == `SPECIAL) && (funct == `DIV);
+	assign has_div_d = (opcode == `SPECIAL) && (funct == `DIV);
 
-	assign IsByteD = (opcode == `LB || opcode == `SB);
+	assign is_byte_d = (opcode == `LB || opcode == `SB);
 
 	assign mem_write =
 		(opcode == `SW) |
@@ -118,7 +118,7 @@ module control_unit(clock, opcode, funct, instr_shamt, reg_rt_id, is_r_type,
 		(funct == `SLL));
 	
 	// For LUI, the shamt needs to be set to 16.
-	assign shamtD = (opcode == `LUI) ? 16 : instr_shamt;
+	assign shamt_d = (opcode == `LUI) ? 16 : instr_shamt;
 
 	// This is 1 if and only if the instruction is an r-type instruction.
 	assign reg_dest = is_r_type; 

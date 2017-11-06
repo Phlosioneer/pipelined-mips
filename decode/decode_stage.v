@@ -9,6 +9,7 @@
 `include "decode/jump_unit.v"
 `include "hazard/hazard_unit.v"
 `include "decode/mf_unit.v"
+`include "decode/reg_file.v"
 
 module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback_id, reg_write_w,
 		has_div_w, div_hi_w, div_lo_w,
@@ -133,7 +134,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.ra_write_value(ra_write_value),
 		.reg_hi_w(div_hi_w),
 		.reg_lo_w(div_lo_w),
-		.has_div_w(has_div_w),
+		.control_hilo_write(has_div_w),
 		
 		// Outputs
 		.reg_rs_value(instr_rs_value),
@@ -185,11 +186,11 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.rt_is_zero(rt_is_zero),
 		.syscall (syscall),
 		.imm_is_unsigned (imm_is_unsigned),
-		.shamtD (shamt_d),
+		.shamt_d (shamt_d),
 		.is_mf_hi (is_mf_hi),
 		.is_mf_lo (is_mf_lo),
-		.HasDivD (has_div_d),
-		.IsByteD(is_byte_d)
+		.has_div_d (has_div_d),
+		.is_byte_d(is_byte_d)
 		);
 	
 	// The jump decider.

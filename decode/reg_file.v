@@ -19,7 +19,7 @@
 // the value discretely rather than continuously, it must wait until posedge of
 // the clock.
 module reg_file(clock, reg_rs_id, reg_rt_id, control_reg_write, control_write_id,
-		reg_write_value, reg_hi_w, reg_lo_w, has_div_w, reg_rs_value, reg_rt_value,
+		reg_write_value, reg_hi_w, reg_lo_w, control_hilo_write, reg_rs_value, reg_rt_value,
 		ra_write, ra_write_value, syscall_funct, syscall_param_1, reg_hi_d,
 		reg_lo_d);
 	
@@ -51,7 +51,7 @@ module reg_file(clock, reg_rs_id, reg_rt_id, control_reg_write, control_write_id
 
 	// This wire is true when the hi and lo registers should be updated
 	// with the values in reg_hi_w and reg_lo_w.
-	input wire has_div_w;
+	input wire control_hilo_write;
 
 	input wire [31:0] reg_hi_w;
 	input wire [31:0] reg_lo_w;
@@ -126,8 +126,8 @@ module reg_file(clock, reg_rs_id, reg_rt_id, control_reg_write, control_write_id
 		end
 	endgenerate
 
-	register hi(inverted_clock, has_div_w, reg_hi_w, reg_hi_d);
-	register lo(inverted_clock, has_div_w, reg_lo_w, reg_lo_d);
+	register hi(inverted_clock, control_hilo_write, reg_hi_w, reg_hi_d);
+	register lo(inverted_clock, control_hilo_write, reg_lo_w, reg_lo_d);
 
 	always@(*) begin
 		reg_rs_value <= bank_outputs[reg_rs_id];

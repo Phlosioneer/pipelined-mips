@@ -4,7 +4,6 @@
 `ifndef DECODER_V
 `define DECODER_V
 
-`include "decode/decoder/reg_file.v"
 `include "decode/decoder/instr_splitter.v"
 `include "decode/decoder/branch_adder.v"
 `include "decode/decoder/jump_calculator.v"
