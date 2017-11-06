@@ -10,8 +10,8 @@
 
 // This module encapsulates the entire execute stage.
 module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu_op_d,
-	alu_src_d, reg_dest_d, rs_value_d, rt_value_d, RsD, RtD, RdD, SignImmD, shamtD,
-	syscallD, syscall_functD, syscall_param1D, HasDivD, IsByteD,
+	alu_src_d, reg_dest_d, rs_value_d, rt_value_d, rs_id_d, rt_id_d, rd_id_d, sign_imm_d, shamt_d,
+	is_syscall_d, syscall_functD, syscall_param1D, HasDivD, IsByteD,
 	RegWriteE, MemtoRegE, MemWriteE, RegDstE, ALUControlE,
 	RD1E, RD2E, RsE, RtE, RdE, SignImmE, 
 	ResultW, ALUOutM, ForwardAE, ForwardBE,
@@ -52,19 +52,19 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	input wire [31:0] rt_value_d;
 
 	// The first source register.
-	input wire [4:0] RsD;
+	input wire [4:0] rs_id_d;
 
 	// The second source register.
-	input wire [4:0] RtD;
+	input wire [4:0] rt_id_d;
 
 	// The destination register.
-	input wire [4:0] RdD;
+	input wire [4:0] rd_id_d;
 
 	// The sign-extended immediate value.
-	input wire [31:0] SignImmD;
+	input wire [31:0] sign_imm_d;
 
 	// The shift amount value
-	input wire [4:0] shamtD;
+	input wire [4:0] shamt_d;
 
 	/*** The following inputs are fed from elsewhere ***/
 
@@ -81,7 +81,7 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	input wire [1:0] ForwardBE;
 
 	// Logic for the syscall unit.
-	input wire syscallD;
+	input wire is_syscall_d;
 	input wire [31:0] syscall_functD;
 	input wire [31:0] syscall_param1D;
 
@@ -178,12 +178,12 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 		.reg_dest_d(reg_dest_d),
 		.rs_value_d(rs_value_d),
 		.rt_value_d(rt_value_d),
-		.RsD(RsD),
-		.RtD(RtD),
-		.RdD(RdD),
-		.SignImmD(SignImmD),
-		.shamtD(shamtD),
-		.syscallD(syscallD),
+		.rs_id_d(rs_id_d),
+		.rt_id_d(rt_id_d),
+		.rd_id_d(rd_id_d),
+		.sign_imm_d(sign_imm_d),
+		.shamt_d(shamt_d),
+		.is_syscall_d(is_syscall_d),
 		.syscall_functD(syscall_functD),
 		.syscall_param1D(syscall_param1D),
 		.HasDivD(HasDivD),
