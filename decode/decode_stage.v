@@ -10,15 +10,15 @@
 `include "hazard/hazard_unit.v"
 `include "decode/mf_unit.v"
 
-module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback_id, reg_write_W,
-		HasDivW, DivHiW, DivLoW,
+module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback_id, reg_write_w,
+		has_div_w, div_hi_w, div_lo_w,
 
 		reg_rs_value, reg_rt_value, immediate, jump_address, reg_rs_id,
-		reg_rt_id, reg_rd_id, shamtD,
+		reg_rt_id, reg_rd_id, shamt_d,
 
-		reg_write_D, mem_to_reg, mem_write, alu_op, alu_src, reg_dest, pc_src,
+		reg_write_d, mem_to_reg, mem_write, alu_op, alu_src, reg_dest, pc_src,
 		
-		syscall, syscall_funct, syscall_param1, MfOpInD, HasDivD, IsByteD, BranchD);
+		syscall, syscall_funct, syscall_param_1, mf_op_in_d, has_div_d, is_byte_d, branch_d);
 
 	input wire clock;
 
@@ -29,10 +29,10 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 	// Inputs from the Writeback stage.
 	input wire [31:0] writeback_value;
 	input wire [4:0] writeback_id;
-	input wire reg_write_W;
-	input wire HasDivW;
-	input wire [31:0] DivHiW;
-	input wire [31:0] DivLoW;
+	input wire reg_write_w;
+	input wire has_div_w;
+	input wire [31:0] div_hi_w;
+	input wire [31:0] div_lo_w;
 
 	// Outputs from the decode stage.
 	output wire [31:0] reg_rs_value;
@@ -42,10 +42,10 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 	output wire [4:0] reg_rs_id;
 	output wire [4:0] reg_rt_id;
 	output wire [4:0] reg_rd_id;
-	output wire [4:0] shamtD;
+	output wire [4:0] shamt_d;
 
 	// Outputs from the control unit.
-	output wire reg_write_D;
+	output wire reg_write_d;
 	output wire mem_to_reg;
 	output wire mem_write;
 	output wire [3:0] alu_op;
@@ -55,20 +55,20 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 	
 	output wire syscall;
 	output wire [31:0] syscall_funct;
-	output wire [31:0] syscall_param1;
+	output wire [31:0] syscall_param_1;
 
-	output wire HasDivD;
+	output wire has_div_d;
 
 	// This output is used by the hazard unit. It is 1 if the current
 	// instruction is MFHI or MFLO.
-	output wire MfOpInD;
+	output wire mf_op_in_d;
 
 	// This output is used by the hazard unit. It is 1 if the current
 	// instruction is a branch.
-	output wire BranchD;
+	output wire branch_d;
 
 	// This output is used by the memory stage.
-	output wire IsByteD;
+	output wire is_byte_d;
 	
 	// Internal wires.
 	wire is_r_type;
@@ -117,7 +117,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 	
 	assign immediate = imm_is_unsigned ? unsign_immediate : sign_immediate;
 
-	assign MfOpInD = is_mf_hi | is_mf_lo;
+	assign mf_op_in_d = is_mf_hi | is_mf_lo;
 
 	// The decoder
 	// TODO: Link part of Jump and Link not implemented!
@@ -126,14 +126,14 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.instruction (instruction),
 		.pc_plus_four (pc_plus_four),
 		.writeback_value (writeback_value),
-		.should_writeback (reg_write_W),
+		.should_writeback (reg_write_w),
 		.writeback_id (writeback_id),
 		.is_r_type (is_r_type),
 		.ra_write (ra_write),
 		.ra_write_value (ra_write_value),
-		.HasDivW (HasDivW),
-		.reg_hi_W (DivHiW),
-		.reg_lo_W (DivLoW),
+		.HasDivW (has_div_w),
+		.reg_hi_W (div_hi_w),
+		.reg_lo_W (div_lo_w),
 		.reg_rs_value (instr_rs_value),
 		.reg_rt_value (reg_rt_value),
 		.sign_immediate (sign_immediate),
@@ -147,7 +147,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.funct (funct),
 		.opcode (opcode),
 		.syscall_funct (syscall_funct),
-		.syscall_param1 (syscall_param1),
+		.syscall_param1 (syscall_param_1),
 		.reg_hi_D (reg_hi),
 		.reg_lo_D (reg_lo)
 		);
@@ -162,7 +162,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.is_r_type (is_r_type),
 		.is_i_type (is_i_type),
 		.is_j_type (is_j_type),
-		.reg_write (reg_write_D),
+		.reg_write (reg_write_d),
 		.mem_to_reg (mem_to_reg),
 		.mem_write (mem_write),
 		.alu_op (alu_op),
@@ -175,11 +175,11 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.rt_is_zero(rt_is_zero),
 		.syscall (syscall),
 		.imm_is_unsigned (imm_is_unsigned),
-		.shamtD (shamtD),
+		.shamtD (shamt_d),
 		.is_mf_hi (is_mf_hi),
 		.is_mf_lo (is_mf_lo),
-		.HasDivD (HasDivD),
-		.IsByteD(IsByteD)
+		.HasDivD (has_div_d),
+		.IsByteD(is_byte_d)
 		);
 	
 	// The jump decider.
@@ -199,7 +199,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.rt_is_zero(rt_is_zero),
 		.jump_address (jump_address),
 		.pc_src (pc_src),
-		.branch (BranchD),
+		.branch (branch_d),
 		.ra_write_value (ra_write_value),
 		.ra_write (ra_write)
 		);

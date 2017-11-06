@@ -148,10 +148,10 @@ module cpu(clock);
         // Inputs from writeback.
         .writeback_value(ResultW), 
         .writeback_id(WriteRegW), 
-        .reg_write_W(RegWriteW),
-		.HasDivW(HasDivW),
-		.DivHiW(DivHiW),
-		.DivLoW(DivLoW),
+        .reg_write_w(RegWriteW),
+		.has_div_w(HasDivW),
+		.div_hi_w(DivHiW),
+		.div_lo_w(DivLoW),
 
         // Decode to EX.
         .reg_rs_value(RD1D),
@@ -160,21 +160,21 @@ module cpu(clock);
         .reg_rs_id(RsD),
         .reg_rt_id(RtD),
         .reg_rd_id(RdD),
-        .shamtD(shamtD),
+        .shamt_d(shamtD),
 
         // Control to EX
-        .reg_write_D(RegWriteD),
+        .reg_write_d(RegWriteD),
         .mem_to_reg(MemtoRegD),
         .mem_write(MemWriteD),
         .alu_op(ALUControlD),
         .alu_src(ALUSrcD),
         .reg_dest(RegDstD),
-		.HasDivD(HasDivD),
-		.IsByteD(IsByteD),
+		.has_div_d(HasDivD),
+		.is_byte_d(IsByteD),
 
 		// Control to Hazard
-		.MfOpInD(MfOpInD),
-		.BranchD(BranchD),
+		.mf_op_in_d(MfOpInD),
+		.branch_d(BranchD),
 
 		// Outputs back to fetch.
 		.pc_src (pc_src_d),
@@ -183,7 +183,7 @@ module cpu(clock);
 		// Syscall logic
 		.syscall(syscallD),
 		.syscall_funct(syscall_functD),
-		.syscall_param1(syscall_param1D)
+		.syscall_param_1(syscall_param1D)
         );
 
     execute_stage EX_stage(
