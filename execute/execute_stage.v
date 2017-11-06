@@ -12,8 +12,8 @@
 module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu_op_d,
 	alu_src_d, reg_dest_d, rs_value_d, rt_value_d, rs_id_d, rt_id_d, rd_id_d, sign_imm_d, shamt_d,
 	is_syscall_d, syscall_funct_d, syscall_param_1_d, has_div_d, is_byte_d,
-	reg_write_e, mem_to_reg_e, mem_write_e, RegDstE,
-	RsE, RtE, RdE,
+	reg_write_e, mem_to_reg_e, mem_write_e, reg_dest_e,
+	rs_id_e, rt_id_e, rd_id_e,
 	ResultW, mem_to_ex_value, ForwardAE, ForwardBE,
 	WriteRegE, WriteDataE, ALUOutE, DivHiE, DivLoE, HasDivE, IsByteE);
 
@@ -110,22 +110,22 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	wire alu_src_e;
 
 	// The control signal denoting whether the write reg is rd (R-type instr).
-	output wire RegDstE;
+	output wire reg_dest_e;
 
 	// The data read from the first source register (rs).
-	wire [31:0] RD1E;
+	wire [31:0] rs_value_e;
 
 	// The data read from the second source register (rt).
-	wire [31:0] RD2E;
+	wire [31:0] rt_value_e;
 
 	// The first source register.
-	output wire [4:0] RsE;
+	output wire [4:0] rs_id_e;
 
 	// The second source register.
-	output wire [4:0] RtE;
+	output wire [4:0] rt_id_e;
 
 	// The destination register.
-	output wire [4:0] RdE;
+	output wire [4:0] rd_id_e;
 
 	// The sign-extended immediate value.
 	wire [31:0] SignImmE;
@@ -194,12 +194,12 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 		.mem_write_e(mem_write_e),
 		.alu_op_e(alu_op_e),
 		.alu_src_e(alu_src_e),
-		.RegDstE(RegDstE),
-		.RD1E(RD1E),
-		.RD2E(RD2E),
-		.RsE(RsE),
-		.RtE(RtE),
-		.RdE(RdE),
+		.reg_dest_e(reg_dest_e),
+		.rs_value_e(rs_value_e),
+		.rt_value_e(rt_value_e),
+		.rs_id_e(rs_id_e),
+		.rt_id_e(rt_id_e),
+		.rd_id_e(rd_id_e),
 		.SignImmE(SignImmE),
 		.shamtE(shamtE),
 		.syscallE(syscallE),
@@ -208,9 +208,9 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 		.HasDivE(HasDivE),
 		.IsByteE(IsByteE));
 
-	mux5_2 write_reg_mux(RdE, RtE, RegDstE, WriteRegE);
-	mux32_3 write_data_mux(RD2E, ResultW, mem_to_ex_value, ForwardBE, WriteDataE);
-	mux32_3 srcA_mux(RD1E, ResultW, mem_to_ex_value, ForwardAE, SrcAE);
+	mux5_2 write_reg_mux(rd_id_e, rt_id_e, reg_dest_e, WriteRegE);
+	mux32_3 write_data_mux(rt_value_e, ResultW, mem_to_ex_value, ForwardBE, WriteDataE);
+	mux32_3 srcA_mux(rs_value_e, ResultW, mem_to_ex_value, ForwardAE, SrcAE);
 	mux32_2 srcB_mux(SignImmE, WriteDataE, alu_src_e, SrcBE);
 
 	alu myALU(

@@ -11,8 +11,8 @@
 module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu_op_d,
 	alu_src_d, reg_dest_d, rs_value_d, rt_value_d, rs_id_d, rt_id_d, rd_id_d, sign_imm_d, shamt_d,
 	is_syscall_d, syscall_funct_d, syscall_param_1_d, has_div_d, is_byte_d,
-	reg_write_e, mem_to_reg_e, mem_write_e, alu_op_e, alu_src_e, RegDstE,
-	RD1E, RD2E, RsE, RtE, RdE, SignImmE, shamtE, syscallE, syscall_functE, syscall_param1E,
+	reg_write_e, mem_to_reg_e, mem_write_e, alu_op_e, alu_src_e, reg_dest_e,
+	rs_value_e, rt_value_e, rs_id_e, rt_id_e, rd_id_e, SignImmE, shamtE, syscallE, syscall_functE, syscall_param1E,
 	HasDivE, IsByteE);
 
 	// The clock.
@@ -94,22 +94,22 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write
 	output wire alu_src_e;
 
 	// The control signal denoting whether the write reg is rd (R-type instr).
-	output wire RegDstE;
+	output wire reg_dest_e;
 
 	// The data read from the first source register (rs).
-	output wire [31:0] RD1E;
+	output wire [31:0] rs_value_e;
 
 	// The data read from the second source register (rt).
-	output wire [31:0] RD2E;
+	output wire [31:0] rt_value_e;
 
 	// The first source register.
-	output wire [4:0] RsE;
+	output wire [4:0] rs_id_e;
 
 	// The second source register.
-	output wire [4:0] RtE;
+	output wire [4:0] rt_id_e;
 
 	// The destination register.
-	output wire [4:0] RdE;
+	output wire [4:0] rd_id_e;
 
 	// The sign-extended immediate value.
 	output wire [31:0] SignImmE;
@@ -131,20 +131,20 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write
  	pipeline_reg_1bit mem_to_reg(clock, !flush_e, mem_to_reg_d, mem_to_reg_e);
  	pipeline_reg_1bit mem_write(clock, !flush_e, mem_write_d, mem_write_e);
  	pipeline_reg_1bit alu_src(clock, !flush_e, alu_src_d, alu_src_e);
- 	pipeline_reg_1bit reg_dst(clock, !flush_e, reg_dest_d, RegDstE);
+ 	pipeline_reg_1bit reg_dst(clock, !flush_e, reg_dest_d, reg_dest_e);
 	pipeline_reg_1bit syscall(clock, !flush_e, is_syscall_d, syscallE);
 	pipeline_reg_1bit HasDiv(clock, !flush_e, has_div_d, HasDivE);
 	pipeline_reg_1bit IsByte(clock, !flush_e, is_byte_d, IsByteE);
  
  	// 5-bit values to propagate
- 	pipeline_reg_5bit rs(clock, !flush_e, rs_id_d, RsE);
- 	pipeline_reg_5bit rt(clock, !flush_e, rt_id_d, RtE);
- 	pipeline_reg_5bit rd(clock, !flush_e, rd_id_d, RdE);
+ 	pipeline_reg_5bit rs(clock, !flush_e, rs_id_d, rs_id_e);
+ 	pipeline_reg_5bit rt(clock, !flush_e, rt_id_d, rt_id_e);
+ 	pipeline_reg_5bit rd(clock, !flush_e, rd_id_d, rd_id_e);
 	pipeline_reg_5bit shamt(clock, !flush_e, shamt_d, shamtE);
 
  	// 32-bit values to propagate
- 	pipeline_reg rd1(clock, !flush_e, rs_value_d, RD1E);
- 	pipeline_reg rd2(clock, !flush_e, rt_value_d, RD2E);
+ 	pipeline_reg rd1(clock, !flush_e, rs_value_d, rs_value_e);
+ 	pipeline_reg rd2(clock, !flush_e, rt_value_d, rt_value_e);
  	pipeline_reg sign_imm(clock, !flush_e, sign_imm_d, SignImmE);
 	pipeline_reg syscall_funct(clock, !flush_e, syscall_funct_d, syscall_functE);
 	pipeline_reg syscall_param1(clock, !flush_e, syscall_param_1_d, syscall_param1E);
