@@ -9,7 +9,7 @@
 `include "util.v"
 
 // This module encapsulates the entire execute stage.
-module execute_stage(clk, FlushE, RegWriteD, MemtoRegD, MemWriteD, ALUControlD,
+module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, MemWriteD, ALUControlD,
 	ALUSrcD, RegDstD, RD1D, RD2D, RsD, RtD, RdD, SignImmD, shamtD,
 	syscallD, syscall_functD, syscall_param1D, HasDivD, IsByteD,
 	RegWriteE, MemtoRegE, MemWriteE, RegDstE, ALUControlE,
@@ -18,20 +18,20 @@ module execute_stage(clk, FlushE, RegWriteD, MemtoRegD, MemWriteD, ALUControlD,
 	WriteRegE, WriteDataE, ALUOutE, DivHiE, DivLoE, HasDivE, IsByteE);
 
 	// The clock.
-	input wire clk;
+	input wire clock;
 
 	// The flag from the Hazard Unit raised when this pipeline stage should be
 	// flushed.
-	input wire FlushE;
+	input wire flush_e;
 
 	/*** The following inputs are fed from the Decode pipeline stage ***/
 
 	// The control signal denoting whether a register is written to.
-	input wire RegWriteD;
+	input wire reg_write_d;
 
 	// The control signal denoting whether data is being written from
 	// memory to a register.
-	input wire MemtoRegD;
+	input wire mem_to_reg_d;
 
 	// The control signal denoting whether main memory is being written to.
 	input wire MemWriteD;
@@ -168,10 +168,10 @@ module execute_stage(clk, FlushE, RegWriteD, MemtoRegD, MemWriteD, ALUControlD,
 	// Instantiate all muxes, the ALU, and the EX pipeline register
 
 	execute_pipeline_reg EX_pipeline_reg(
-		.clk(clk), 
-		.FlushE(FlushE), 
-		.RegWriteD(RegWriteD),
-		.MemtoRegD(MemtoRegD),
+		.clock(clock), 
+		.flush_e(flush_e), 
+		.reg_write_d(reg_write_d),
+		.mem_to_reg_d(mem_to_reg_d),
 		.MemWriteD(MemWriteD),
 		.ALUControlD(ALUControlD),
 		.ALUSrcD(ALUSrcD),

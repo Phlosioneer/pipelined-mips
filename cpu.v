@@ -187,14 +187,14 @@ module cpu(clock);
         );
 
     execute_stage EX_stage(
-        .clk(clock),
+        .clock(clock),
     
         // Input from the hazard control unit.
-        .FlushE(FlushE),
+        .flush_e(FlushE),
     
         // Input from the decode stage.
-        .RegWriteD(RegWriteD),
-        .MemtoRegD(MemtoRegD),
+        .reg_write_d(RegWriteD),
+        .mem_to_reg_d(MemtoRegD),
         .MemWriteD(MemWriteD),
         .ALUControlD(ALUControlD),
         .ALUSrcD(ALUSrcD),

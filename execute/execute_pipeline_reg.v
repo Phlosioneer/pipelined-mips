@@ -8,7 +8,7 @@
 `include "register/pipeline_reg.v"
 
 // This module encapsulates the entire execute pipeline register.
-module execute_pipeline_reg(clk, FlushE, RegWriteD, MemtoRegD, MemWriteD, ALUControlD,
+module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, MemWriteD, ALUControlD,
 	ALUSrcD, RegDstD, RD1D, RD2D, RsD, RtD, RdD, SignImmD, shamtD,
 	syscallD, syscall_functD, syscall_param1D, HasDivD, IsByteD,
 	RegWriteE, MemtoRegE, MemWriteE, ALUControlE, ALUSrcE, RegDstE,
@@ -16,20 +16,20 @@ module execute_pipeline_reg(clk, FlushE, RegWriteD, MemtoRegD, MemWriteD, ALUCon
 	HasDivE, IsByteE);
 
 	// The clock.
-	input wire clk;
+	input wire clock;
 
 	// The flag from the Hazard Unit raised when this pipeline stage should be
 	// flushed.
-	input wire FlushE;
+	input wire flush_e;
 
 	/*** The following inputs are fed from the Decode pipeline stage ***/
 
 	// The control signal denoting whether a register is written to.
-	input wire RegWriteD;
+	input wire reg_write_d;
 
 	// The control signal denoting whether data is being written from
 	// memory to a register.
-	input wire MemtoRegD;
+	input wire mem_to_reg_d;
 
 	// The control signal denoting whether main memory is being written to.
 	input wire MemWriteD;
@@ -127,29 +127,29 @@ module execute_pipeline_reg(clk, FlushE, RegWriteD, MemtoRegD, MemWriteD, ALUCon
 	output wire IsByteE;
 
  	// 1-bit values to propagate
- 	pipeline_reg_1bit reg_write(clk, !FlushE, RegWriteD, RegWriteE);
- 	pipeline_reg_1bit mem_to_reg(clk, !FlushE, MemtoRegD, MemtoRegE);
- 	pipeline_reg_1bit mem_write(clk, !FlushE, MemWriteD, MemWriteE);
- 	pipeline_reg_1bit alu_src(clk, !FlushE, ALUSrcD, ALUSrcE);
- 	pipeline_reg_1bit reg_dst(clk, !FlushE, RegDstD, RegDstE);
-	pipeline_reg_1bit syscall(clk, !FlushE, syscallD, syscallE);
-	pipeline_reg_1bit HasDiv(clk, !FlushE, HasDivD, HasDivE);
-	pipeline_reg_1bit IsByte(clk, !FlushE, IsByteD, IsByteE);
+ 	pipeline_reg_1bit reg_write(clock, !flush_e, reg_write_d, RegWriteE);
+ 	pipeline_reg_1bit mem_to_reg(clock, !flush_e, mem_to_reg_d, MemtoRegE);
+ 	pipeline_reg_1bit mem_write(clock, !flush_e, MemWriteD, MemWriteE);
+ 	pipeline_reg_1bit alu_src(clock, !flush_e, ALUSrcD, ALUSrcE);
+ 	pipeline_reg_1bit reg_dst(clock, !flush_e, RegDstD, RegDstE);
+	pipeline_reg_1bit syscall(clock, !flush_e, syscallD, syscallE);
+	pipeline_reg_1bit HasDiv(clock, !flush_e, HasDivD, HasDivE);
+	pipeline_reg_1bit IsByte(clock, !flush_e, IsByteD, IsByteE);
  
  	// 5-bit values to propagate
- 	pipeline_reg_5bit rs(clk, !FlushE, RsD, RsE);
- 	pipeline_reg_5bit rt(clk, !FlushE, RtD, RtE);
- 	pipeline_reg_5bit rd(clk, !FlushE, RdD, RdE);
-	pipeline_reg_5bit shamt(clk, !FlushE, shamtD, shamtE);
+ 	pipeline_reg_5bit rs(clock, !flush_e, RsD, RsE);
+ 	pipeline_reg_5bit rt(clock, !flush_e, RtD, RtE);
+ 	pipeline_reg_5bit rd(clock, !flush_e, RdD, RdE);
+	pipeline_reg_5bit shamt(clock, !flush_e, shamtD, shamtE);
 
  	// 32-bit values to propagate
- 	pipeline_reg rd1(clk, !FlushE, RD1D, RD1E);
- 	pipeline_reg rd2(clk, !FlushE, RD2D, RD2E);
- 	pipeline_reg sign_imm(clk, !FlushE, SignImmD, SignImmE);
-	pipeline_reg syscall_funct(clk, !FlushE, syscall_functD, syscall_functE);
-	pipeline_reg syscall_param1(clk, !FlushE, syscall_param1D, syscall_param1E);
+ 	pipeline_reg rd1(clock, !flush_e, RD1D, RD1E);
+ 	pipeline_reg rd2(clock, !flush_e, RD2D, RD2E);
+ 	pipeline_reg sign_imm(clock, !flush_e, SignImmD, SignImmE);
+	pipeline_reg syscall_funct(clock, !flush_e, syscall_functD, syscall_functE);
+	pipeline_reg syscall_param1(clock, !flush_e, syscall_param1D, syscall_param1E);
 
- 	pipeline_reg_4bit alu_control(clk, !FlushE, ALUControlD, ALUControlE);
+ 	pipeline_reg_4bit alu_control(clock, !flush_e, ALUControlD, ALUControlE);
 	
 
 endmodule
