@@ -9,7 +9,7 @@
 
 // This module encapsulates the entire execute pipeline register.
 module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu_op_d,
-	alu_src_d, RegDstD, RD1D, RD2D, RsD, RtD, RdD, SignImmD, shamtD,
+	alu_src_d, reg_dest_d, rs_value_d, rt_value_d, RsD, RtD, RdD, SignImmD, shamtD,
 	syscallD, syscall_functD, syscall_param1D, HasDivD, IsByteD,
 	RegWriteE, MemtoRegE, MemWriteE, ALUControlE, ALUSrcE, RegDstE,
 	RD1E, RD2E, RsE, RtE, RdE, SignImmE, shamtE, syscallE, syscall_functE, syscall_param1E,
@@ -41,13 +41,13 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write
 	input wire alu_src_d;
 
 	// The control signal denoting whether the write reg is rd (R-type instr).
-	input wire RegDstD;
+	input wire reg_dest_d;
 
 	// The data read from the first source register (rs).
-	input wire [31:0] RD1D;
+	input wire [31:0] rs_value_d;
 
 	// The data read from the second source register (rt).
-	input wire [31:0] RD2D;
+	input wire [31:0] rt_value_d;
 
 	// The first source register.
 	input wire [4:0] RsD;
@@ -131,7 +131,7 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write
  	pipeline_reg_1bit mem_to_reg(clock, !flush_e, mem_to_reg_d, MemtoRegE);
  	pipeline_reg_1bit mem_write(clock, !flush_e, mem_write_d, MemWriteE);
  	pipeline_reg_1bit alu_src(clock, !flush_e, alu_src_d, ALUSrcE);
- 	pipeline_reg_1bit reg_dst(clock, !flush_e, RegDstD, RegDstE);
+ 	pipeline_reg_1bit reg_dst(clock, !flush_e, reg_dest_d, RegDstE);
 	pipeline_reg_1bit syscall(clock, !flush_e, syscallD, syscallE);
 	pipeline_reg_1bit HasDiv(clock, !flush_e, HasDivD, HasDivE);
 	pipeline_reg_1bit IsByte(clock, !flush_e, IsByteD, IsByteE);
@@ -143,8 +143,8 @@ module execute_pipeline_reg(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write
 	pipeline_reg_5bit shamt(clock, !flush_e, shamtD, shamtE);
 
  	// 32-bit values to propagate
- 	pipeline_reg rd1(clock, !flush_e, RD1D, RD1E);
- 	pipeline_reg rd2(clock, !flush_e, RD2D, RD2E);
+ 	pipeline_reg rd1(clock, !flush_e, rs_value_d, RD1E);
+ 	pipeline_reg rd2(clock, !flush_e, rt_value_d, RD2E);
  	pipeline_reg sign_imm(clock, !flush_e, SignImmD, SignImmE);
 	pipeline_reg syscall_funct(clock, !flush_e, syscall_functD, syscall_functE);
 	pipeline_reg syscall_param1(clock, !flush_e, syscall_param1D, syscall_param1E);

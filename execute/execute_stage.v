@@ -10,7 +10,7 @@
 
 // This module encapsulates the entire execute stage.
 module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu_op_d,
-	alu_src_d, RegDstD, RD1D, RD2D, RsD, RtD, RdD, SignImmD, shamtD,
+	alu_src_d, reg_dest_d, rs_value_d, rt_value_d, RsD, RtD, RdD, SignImmD, shamtD,
 	syscallD, syscall_functD, syscall_param1D, HasDivD, IsByteD,
 	RegWriteE, MemtoRegE, MemWriteE, RegDstE, ALUControlE,
 	RD1E, RD2E, RsE, RtE, RdE, SignImmE, 
@@ -43,13 +43,13 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	input wire alu_src_d;
 
 	// The control signal denoting whether the write reg is rd (R-type instr).
-	input wire RegDstD;
+	input wire reg_dest_d;
 
 	// The data read from the first source register (rs).
-	input wire [31:0] RD1D;
+	input wire [31:0] rs_value_d;
 
 	// The data read from the second source register (rt).
-	input wire [31:0] RD2D;
+	input wire [31:0] rt_value_d;
 
 	// The first source register.
 	input wire [4:0] RsD;
@@ -175,9 +175,9 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 		.mem_write_d(mem_write_d),
 		.alu_op_d(alu_op_d),
 		.alu_src_d(alu_src_d),
-		.RegDstD(RegDstD),
-		.RD1D(RD1D),
-		.RD2D(RD2D),
+		.reg_dest_d(reg_dest_d),
+		.rs_value_d(rs_value_d),
+		.rt_value_d(rt_value_d),
 		.RsD(RsD),
 		.RtD(RtD),
 		.RdD(RdD),
