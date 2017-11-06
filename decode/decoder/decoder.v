@@ -26,12 +26,9 @@
 // allow the values to stabilize.
 //
 // TODO: Add reg_jump_address for jr instruction.
-module decoder(clock, instruction, pc_plus_four, writeback_value,
-		should_writeback, writeback_id, ra_write, ra_write_value, is_r_type,
-	    reg_hi_w, reg_lo_w, has_div_w, reg_rs_value,
-		reg_rt_value, sign_immediate, unsign_immediate, branch_address, jump_address,
-		reg_rs_id, reg_rt_id, reg_rd_id, shamt, funct, opcode,
-		syscall_funct, syscall_param_1, reg_hi_d, reg_lo_d);
+module decoder(clock, instruction, pc_plus_four, is_r_type, sign_immediate,
+		unsign_immediate, branch_address, jump_address, reg_rs_id, reg_rt_id,
+		reg_rd_id, shamt, funct, opcode);
 	
 	// The clock.
 	input wire clock;
@@ -42,46 +39,9 @@ module decoder(clock, instruction, pc_plus_four, writeback_value,
 	// The address of the next instruction to be executed (pc + 4).
 	input wire [31:0] pc_plus_four;
 	
-	// This is the value to write into the register specified by
-	// writeback_id, if should_writeback is 1. The writeback happens at
-	// negedge of the clock, so don't change this value at negedge of the
-	// clock to avoid data races.
-	input wire [31:0] writeback_value;
 
-	// This value is 1 if the writeback_value should be saved to the
-	// register specified by writeback_id, 0 otherwise. The writeback
-	// happens at negedge of the clock, so don't change this value at
-	// negedge of the clock to avoid data races.
-	input wire should_writeback;
-
-	// This is the id of the register to write the writeback_value to if
-	// should_writeback is 1. The writeback happens at negedge of the
-	// clock, so don't change this value at negedge of the clock to avoid
-	// data races.
-	input wire [4:0] writeback_id;
-	
 	// This is 1 if the current instruction is R-type, 0 otherwise.
 	input wire is_r_type;
-	
-	// This is true if ra_write_value should be written to the ra
-	// register.
-	input wire ra_write;
-	input wire [31:0] ra_write_value;
-
-	// This is true if the hi and lo registers should be updated with the
-	// values in reg_hi_w and reg_lo_w.
-	input wire has_div_w;
-
-	input wire [31:0] reg_hi_w;
-	input wire [31:0] reg_lo_w;
-
-	// This outputs the value of the RS register of the current instruction.
-	// If the current instruction is J-type, consider this output junk.
-	output wire [31:0] reg_rs_value;
-
-	// This outputs the value of the RT register of the current instruction.
-	// If the current instruction is not R-type, consider this output junk.
-	output wire [31:0] reg_rt_value;
 	
 	// This outputs the sign-extended immediate value in the current
 	// instruction. If the current instruction is not I-type, consider
@@ -127,21 +87,6 @@ module decoder(clock, instruction, pc_plus_four, writeback_value,
 	// Outputs the current opcode.
 	output wire [5:0] opcode;
 
-	// Outputs the syscall function number, assuming the instruction is
-	// a syscall function.
-	output wire [31:0] syscall_funct;
-
-	// Outputs the syscall parameter, which is used in syscalls, assuming
-	// the instruction is a syscall function.
-	// Technically, there are 4 sycall parameters, but we only implement
-	// syscalls that need one parameter.
-	output wire [31:0] syscall_param_1;
-
-	// The values of the special Hi and Lo registers, used in divide and
-	// multiply instructions.
-	output wire [31:0] reg_hi_d;
-	output wire [31:0] reg_lo_d;
-	
 	// These are the register ID's decoded assuming the current instruction
 	// is R-type.
 	wire [4:0] r_type_rs;
@@ -163,28 +108,6 @@ module decoder(clock, instruction, pc_plus_four, writeback_value,
 	assign reg_rt_id = is_r_type ? r_type_rt : i_type_rd;
 	assign reg_rd_id = is_r_type ? r_type_rd : i_type_rd;
 
-	// This module contains the register file. Writeback happens at
-	// negedge of the clock. It uses the ID values calculated based on
-	// whether the current instruction is I-type.
-	reg_file bank(
-		.clock (clock),
-		.reg_rs_id (reg_rs_id),
-		.reg_rt_id (reg_rt_id),
-		.control_reg_write (should_writeback),
-		.control_write_id (writeback_id),
-		.reg_write_value(writeback_value),
-		.ra_write(ra_write),
-		.ra_write_value(ra_write_value),
-		.reg_hi_w(reg_hi_w),
-		.reg_lo_w(reg_lo_w),
-		.has_div_w(has_div_w),
-		.reg_rs_value(reg_rs_value),
-		.reg_rt_value(reg_rt_value),
-		.syscall_funct(syscall_funct),
-		.syscall_param_1(syscall_param_1),
-		.reg_hi_d(reg_hi_d),
-		.reg_lo_d(reg_lo_d)
-		);
 
 	// This module extracts info from the current instruction, assuming it
 	// is R-type.

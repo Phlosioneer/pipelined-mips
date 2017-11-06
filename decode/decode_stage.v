@@ -98,8 +98,8 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 	
 	// The values of the special hi and lo registers, used during divides
 	// and multiplies.
-	wire [31:0] reg_hi;
-	wire [31:0] reg_lo;
+	wire [31:0] reg_hi_d;
+	wire [31:0] reg_lo_d;
 
 	// True if ra_write_value needs to be written to the ra register.
 	wire ra_write;
@@ -119,23 +119,37 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 
 	assign mf_op_in_d = is_mf_hi | is_mf_lo;
 
+	// This module contains the register file. Writeback happens
+	// at negedge of the clock.
+	reg_file bank(
+		// Inputs
+		.clock (clock),
+		.reg_rs_id (reg_rs_id),
+		.reg_rt_id (reg_rt_id),
+		.control_reg_write (reg_write_w),
+		.control_write_id (writeback_id),
+		.reg_write_value(writeback_value),
+		.ra_write(ra_write),
+		.ra_write_value(ra_write_value),
+		.reg_hi_w(div_hi_w),
+		.reg_lo_w(div_lo_w),
+		.has_div_w(has_div_w),
+		
+		// Outputs
+		.reg_rs_value(instr_rs_value),
+		.reg_rt_value(reg_rt_value),
+		.syscall_funct(syscall_funct),
+		.syscall_param_1(syscall_param_1),
+		.reg_hi_d(reg_hi_d),
+		.reg_lo_d(reg_lo_d)
+		);
+
 	// The decoder
-	// TODO: Link part of Jump and Link not implemented!
 	decoder decoder(
 		.clock (clock),
 		.instruction (instruction),
 		.pc_plus_four (pc_plus_four),
-		.writeback_value (writeback_value),
-		.should_writeback (reg_write_w),
-		.writeback_id (writeback_id),
 		.is_r_type (is_r_type),
-		.ra_write (ra_write),
-		.ra_write_value (ra_write_value),
-		.has_div_w (has_div_w),
-		.reg_hi_w (div_hi_w),
-		.reg_lo_w (div_lo_w),
-		.reg_rs_value (instr_rs_value),
-		.reg_rt_value (reg_rt_value),
 		.sign_immediate (sign_immediate),
 		.unsign_immediate (unsign_immediate),
 		.branch_address (maybe_branch_address),
@@ -145,11 +159,7 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.reg_rd_id (reg_rd_id),
 		.shamt (instr_shamt),
 		.funct (funct),
-		.opcode (opcode),
-		.syscall_funct (syscall_funct),
-		.syscall_param_1 (syscall_param_1),
-		.reg_hi_d (reg_hi),
-		.reg_lo_d (reg_lo)
+		.opcode (opcode)
 		);
 
 	// The control unit.
@@ -205,8 +215,8 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		);
 
 	mf_unit mf_decider(
-		.reg_hi (reg_hi),
-		.reg_lo (reg_lo),
+		.reg_hi (reg_hi_d),
+		.reg_lo (reg_lo_d),
 		.instr_rs_value (instr_rs_value),
 		.is_mf_hi (is_mf_hi),
 		.is_mf_lo (is_mf_lo),
