@@ -9,7 +9,7 @@
 `include "decode/decoder/branch_adder.v"
 `include "decode/decoder/jump_calculator.v"
 
-// This module encapsulates the entire decode stage.
+// This module encapsulates the instruction decoding process.
 // 
 // Note: The names of these input and output wires differ slightly from the
 // names given in the pipelined mips diagram. The names and their
@@ -28,10 +28,10 @@
 // TODO: Add reg_jump_address for jr instruction.
 module decoder(clock, instruction, pc_plus_four, writeback_value,
 		should_writeback, writeback_id, ra_write, ra_write_value, is_r_type,
-	    reg_hi_W, reg_lo_W, HasDivW, reg_rs_value,
+	    reg_hi_w, reg_lo_w, has_div_w, reg_rs_value,
 		reg_rt_value, sign_immediate, unsign_immediate, branch_address, jump_address,
 		reg_rs_id, reg_rt_id, reg_rd_id, shamt, funct, opcode,
-		syscall_funct, syscall_param1, reg_hi_D, reg_lo_D);
+		syscall_funct, syscall_param_1, reg_hi_d, reg_lo_d);
 	
 	// The clock.
 	input wire clock;
@@ -69,11 +69,11 @@ module decoder(clock, instruction, pc_plus_four, writeback_value,
 	input wire [31:0] ra_write_value;
 
 	// This is true if the hi and lo registers should be updated with the
-	// values in reg_hi_W and reg_lo_W.
-	input wire HasDivW;
+	// values in reg_hi_w and reg_lo_w.
+	input wire has_div_w;
 
-	input wire [31:0] reg_hi_W;
-	input wire [31:0] reg_lo_W;
+	input wire [31:0] reg_hi_w;
+	input wire [31:0] reg_lo_w;
 
 	// This outputs the value of the RS register of the current instruction.
 	// If the current instruction is J-type, consider this output junk.
@@ -135,12 +135,12 @@ module decoder(clock, instruction, pc_plus_four, writeback_value,
 	// the instruction is a syscall function.
 	// Technically, there are 4 sycall parameters, but we only implement
 	// syscalls that need one parameter.
-	output wire [31:0] syscall_param1;
+	output wire [31:0] syscall_param_1;
 
 	// The values of the special Hi and Lo registers, used in divide and
 	// multiply instructions.
-	output wire [31:0] reg_hi_D;
-	output wire [31:0] reg_lo_D;
+	output wire [31:0] reg_hi_d;
+	output wire [31:0] reg_lo_d;
 	
 	// These are the register ID's decoded assuming the current instruction
 	// is R-type.
@@ -175,15 +175,15 @@ module decoder(clock, instruction, pc_plus_four, writeback_value,
 		.reg_write_value(writeback_value),
 		.ra_write(ra_write),
 		.ra_write_value(ra_write_value),
-		.reg_hi_W(reg_hi_W),
-		.reg_lo_W(reg_lo_W),
-		.HasDivW(HasDivW),
+		.reg_hi_w(reg_hi_w),
+		.reg_lo_w(reg_lo_w),
+		.has_div_w(has_div_w),
 		.reg_rs_value(reg_rs_value),
 		.reg_rt_value(reg_rt_value),
 		.syscall_funct(syscall_funct),
-		.syscall_param1(syscall_param1),
-		.reg_hi_D(reg_hi_D),
-		.reg_lo_D(reg_lo_D)
+		.syscall_param_1(syscall_param_1),
+		.reg_hi_d(reg_hi_d),
+		.reg_lo_d(reg_lo_d)
 		);
 
 	// This module extracts info from the current instruction, assuming it
@@ -225,20 +225,6 @@ module decoder(clock, instruction, pc_plus_four, writeback_value,
 	
 
 endmodule
-// The following table lists the names given on the pipelined mips diagram and
-// their corresponding wire names.
-//
-// InstrD = instruction;
-// RsD = reg_rs_id;
-// RtD = reg_rt_id;
-// RdD = reg_rd_id;
-// SignImmD = immediate;
-// PCPlus4D = pc_plus_four;
-// PCBranchD = branch_address;
-// RD1 = reg_rs_value;
-// RD2 = reg_rt_value;
-// ResultW = writeback_value;
-// WriteRegW = should_writeback;
 
 
 `endif

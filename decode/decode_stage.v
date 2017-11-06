@@ -131,9 +131,9 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.is_r_type (is_r_type),
 		.ra_write (ra_write),
 		.ra_write_value (ra_write_value),
-		.HasDivW (has_div_w),
-		.reg_hi_W (div_hi_w),
-		.reg_lo_W (div_lo_w),
+		.has_div_w (has_div_w),
+		.reg_hi_w (div_hi_w),
+		.reg_lo_w (div_lo_w),
 		.reg_rs_value (instr_rs_value),
 		.reg_rt_value (reg_rt_value),
 		.sign_immediate (sign_immediate),
@@ -147,9 +147,9 @@ module decode_stage(clock, instruction, pc_plus_four, writeback_value, writeback
 		.funct (funct),
 		.opcode (opcode),
 		.syscall_funct (syscall_funct),
-		.syscall_param1 (syscall_param_1),
-		.reg_hi_D (reg_hi),
-		.reg_lo_D (reg_lo)
+		.syscall_param_1 (syscall_param_1),
+		.reg_hi_d (reg_hi),
+		.reg_lo_d (reg_lo)
 		);
 
 	// The control unit.

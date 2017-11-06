@@ -19,9 +19,9 @@
 // the value discretely rather than continuously, it must wait until posedge of
 // the clock.
 module reg_file(clock, reg_rs_id, reg_rt_id, control_reg_write, control_write_id,
-		reg_write_value, reg_hi_W, reg_lo_W, HasDivW, reg_rs_value, reg_rt_value,
-		ra_write, ra_write_value, syscall_funct, syscall_param1, reg_hi_D,
-		reg_lo_D);
+		reg_write_value, reg_hi_w, reg_lo_w, has_div_w, reg_rs_value, reg_rt_value,
+		ra_write, ra_write_value, syscall_funct, syscall_param_1, reg_hi_d,
+		reg_lo_d);
 	
 	// The clock. This is inverted, then passed on to the individual
 	// registers.
@@ -50,11 +50,11 @@ module reg_file(clock, reg_rs_id, reg_rt_id, control_reg_write, control_write_id
 	input wire [31:0] ra_write_value;
 
 	// This wire is true when the hi and lo registers should be updated
-	// with the values in reg_hi_W and reg_lo_W.
-	input wire HasDivW;
+	// with the values in reg_hi_w and reg_lo_w.
+	input wire has_div_w;
 
-	input wire [31:0] reg_hi_W;
-	input wire [31:0] reg_lo_W;
+	input wire [31:0] reg_hi_w;
+	input wire [31:0] reg_lo_w;
 
 	// This is the value of the rs and rt registers, respectively. These
 	// values change immediately as the inputs reg_rs_id and reg_rt_id
@@ -66,12 +66,12 @@ module reg_file(clock, reg_rs_id, reg_rt_id, control_reg_write, control_write_id
 	// These two register values are used for syscalls. Syscall function
 	// is determined by $v0, and the first parameter is determined by $a0
 	output wire [31:0] syscall_funct;
-	output wire [31:0] syscall_param1;
+	output wire [31:0] syscall_param_1;
 
 	// The values of the special hi and lo registers. They're used in
 	// divide and multiply instructions.
-	output wire [31:0] reg_hi_D;
-	output wire [31:0] reg_lo_D;
+	output wire [31:0] reg_hi_d;
+	output wire [31:0] reg_lo_d;
 	
 	// This is the inverse of the current clock. This is used to change
 	// the register array's behavior from write-at-posedge to
@@ -126,8 +126,8 @@ module reg_file(clock, reg_rs_id, reg_rt_id, control_reg_write, control_write_id
 		end
 	endgenerate
 
-	register hi(inverted_clock, HasDivW, reg_hi_W, reg_hi_D);
-	register lo(inverted_clock, HasDivW, reg_lo_W, reg_lo_D);
+	register hi(inverted_clock, has_div_w, reg_hi_w, reg_hi_d);
+	register lo(inverted_clock, has_div_w, reg_lo_w, reg_lo_d);
 
 	always@(*) begin
 		reg_rs_value <= bank_outputs[reg_rs_id];
@@ -135,7 +135,7 @@ module reg_file(clock, reg_rs_id, reg_rt_id, control_reg_write, control_write_id
 	end
 
 	assign syscall_funct = bank_outputs[`v0];
-	assign syscall_param1 = bank_outputs[`a0];
+	assign syscall_param_1 = bank_outputs[`a0];
 
 endmodule
 
