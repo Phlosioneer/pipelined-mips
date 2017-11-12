@@ -11,14 +11,14 @@ module mem_stage(input clock, reg_write_e, mem_to_reg_e, mem_write_e,
   input [31:0] alu_out_e, write_data_e,
 	input [4:0] write_reg_e, input has_div_e, input [31:0] div_hi_e, input [31:0] div_lo_e,
 	input is_byte_e,
-  output RegWriteM, MemtoRegM,
-  output [31:0] RD, ALUOutM, output [4:0] WriteRegM, output HasDivM,
-  output [31:0] DivHiM, output [31:0] DivLoM);
+  output reg_write_m, mem_to_reg_m,
+  output [31:0] read_value_m, alu_out_m, output [4:0] write_reg_m, output has_div_m,
+  output [31:0] div_hi_m, output [31:0] div_lo_m);
 
   // Internal wires
-  wire MemWriteM;
-  wire IsByteM;
-  wire [31:0] WriteDataM;
+  wire mem_write_m;
+  wire is_byte_m;
+  wire [31:0] write_data_m;
   wire [31:0] raw_mem_output;
   wire [7:0] byte_mem_output;
   wire [31:0] signed_byte_mem_output;
@@ -42,33 +42,33 @@ module mem_stage(input clock, reg_write_e, mem_to_reg_e, mem_write_e,
     .is_byte_e(is_byte_e),
 
     // outputs
-    .RegWriteM(RegWriteM),
-    .MemtoRegM(MemtoRegM),
-    .MemWriteM(MemWriteM),
-    .ALUOutM(ALUOutM),
-    .WriteDataM(WriteDataM),
-    .WriteRegM(WriteRegM),
-    .HasDivM(HasDivM),
-    .DivHiM(DivHiM),
-    .DivLoM(DivLoM),
-    .IsByteM(IsByteM));
+    .reg_write_m(reg_write_m),
+    .mem_to_reg_m(mem_to_reg_m),
+    .mem_write_m(mem_write_m),
+    .alu_out_m(alu_out_m),
+    .write_data_m(write_data_m),
+    .write_reg_m(write_reg_m),
+    .has_div_m(has_div_m),
+    .div_hi_m(div_hi_m),
+    .div_lo_m(div_lo_m),
+    .is_byte_m(is_byte_m));
 
   Memory dataMemory(
-	.address(ALUOutM),
-	.WD(raw_mem_input),
-	.WE(MemWriteM),
+	.address(alu_out_m),
+	.write_value(raw_mem_input),
+	.enable_write(mem_write_m),
 	.clock(clock),
-	.MemToRegM(MemtoRegM),
-	.RegWriteM(RegWriteM),
-	.RD(raw_mem_output));
+	.mem_to_reg_m(mem_to_reg_m),
+	.reg_write_m(reg_write_m),
+	.read_value(raw_mem_output));
 
-  assign byte_index = ALUOutM[1:0];
+  assign byte_index = alu_out_m[1:0];
 
   word_indexer indexer(raw_mem_output, byte_index, byte_mem_output);
-  word_masker masker(WriteDataM, raw_mem_output, byte_index, masked_mem_input);
+  word_masker masker(write_data_m, raw_mem_output, byte_index, masked_mem_input);
 
-  assign RD = IsByteM ? signed_byte_mem_output : raw_mem_output;
-  assign raw_mem_input = IsByteM ? masked_mem_input : WriteDataM;
+  assign read_value_m = is_byte_m ? signed_byte_mem_output : raw_mem_output;
+  assign raw_mem_input = is_byte_m ? masked_mem_input : write_data_m;
 
   byte_sign_extend byte_extender(byte_mem_output, signed_byte_mem_output);
 

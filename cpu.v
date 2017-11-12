@@ -253,17 +253,18 @@ module cpu(clock);
 		.is_byte_e(IsByteE),
 
 		// Output to the WB stage.
-        .RegWriteM(RegWriteM),
-        .MemtoRegM(MemtoRegM),
-        .RD(Writeback_RD),
-        .ALUOutM(ALUOutM),
-        .WriteRegM(WriteRegM),
-		.HasDivM(HasDivM),
-		.DivHiM(DivHiM),
-		.DivLoM(DivLoM)
+        .reg_write_m(RegWriteM),
+        .mem_to_reg_m(MemtoRegM),
+        .read_value_m(Writeback_RD),
+        .write_reg_m(WriteRegM),
+		.has_div_m(HasDivM),
+		.div_hi_m(DivHiM),
+		.div_lo_m(DivLoM),
+
+		// This output is used for ex->ex forwarding.
+        .alu_out_m(ALUOutM)
         );
     
-    //writeback pipe
     writeback_pipeline_reg wpipe(
     .clock(clock), 
     .RegWriteM(RegWriteM),
