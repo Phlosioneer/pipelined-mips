@@ -23,8 +23,8 @@ module cpu(clock);
 
     wire FlushE;
      
-    wire [1:0] ForwardAE;
-    wire [1:0] ForwardBE;
+    wire [1:0] forward_rs_e;
+    wire [1:0] forward_rt_e;
     
     // Outputs to decode
     wire [31:0] pc_plus_4f;
@@ -223,18 +223,18 @@ module cpu(clock);
         .rt_id_e(RtE),
         .rd_id_e(RdE),
 		.has_div_e(HasDivE),
-		.DivHiE(DivHiE),
-		.DivLoE(DivLoE),
+		.div_hi_e(DivHiE),
+		.div_lo_e(DivLoE),
 		.is_byte_e(IsByteE),
 
         // Input from the hazard unit.
-        .ForwardAE(ForwardAE),
-        .ForwardBE(ForwardBE),
+        .forward_rs_e(forward_rs_e),
+        .forward_rt_e(forward_rt_e),
 
         // Wires from the control unit forwarded to the mem stage.
-        .WriteRegE(WriteRegE),
-        .WriteDataE(WriteDataE),
-        .ALUOutE(ALUOutE)
+        .write_reg_e(WriteRegE),
+        .write_data_e(WriteDataE),
+        .alu_out_e(ALUOutE)
         );
 
     mem_stage myMemStage(
@@ -309,8 +309,8 @@ module cpu(clock);
 	.StallF(StallF),
 	.StallD(StallD),
 	.FlushE(FlushE),
-	.ForwardAE(ForwardAE),
-	.ForwardBE(ForwardBE)
+	.ForwardAE(forward_rs_e),
+	.ForwardBE(forward_rt_e)
 	);
 
 

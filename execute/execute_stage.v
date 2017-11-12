@@ -14,8 +14,8 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	is_syscall_d, syscall_funct_d, syscall_param_1_d, has_div_d, is_byte_d,
 	reg_write_e, mem_to_reg_e, mem_write_e, reg_dest_e,
 	rs_id_e, rt_id_e, rd_id_e,
-	mem_to_ex_value, ex_to_ex_value, ForwardAE, ForwardBE,
-	WriteRegE, WriteDataE, ALUOutE, DivHiE, DivLoE, has_div_e, is_byte_e);
+	mem_to_ex_value, ex_to_ex_value, forward_rs_e, forward_rt_e,
+	write_reg_e, write_data_e, alu_out_e, div_hi_e, div_lo_e, has_div_e, is_byte_e);
 
 	// The clock.
 	input wire clock;
@@ -74,11 +74,11 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	// The output of the ALU after it has passed through the Memory pipeline reg.
 	input wire [31:0] ex_to_ex_value;
 
-	// The input to the mux (from Hazard Unit) that determines SrcAE.
-	input wire [1:0] ForwardAE;
+	// The input to the mux (from Hazard Unit) that determines src_l.
+	input wire [1:0] forward_rs_e;
 
-	// The input to the mux (from Hazard Unit) that determines SrcBE.
-	input wire [1:0] ForwardBE;
+	// The input to the mux (from Hazard Unit) that determines src_r.
+	input wire [1:0] forward_rt_e;
 
 	// Logic for the syscall unit.
 	input wire is_syscall_d;
@@ -133,14 +133,14 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	/*** The following outputs are generated internal to the execute stage ***/
 
 	// The 5-bit register code that will be written to.
-	output wire [4:0] WriteRegE;
+	output wire [4:0] write_reg_e;
 
 	// The 32-bit data to write to memory.
-	output wire [31:0] WriteDataE;
+	output wire [31:0] write_data_e;
 
 	// The outputs of a divide instruction; 0 otherwise.
-	output wire [31:0] DivHiE;
-	output wire [31:0] DivLoE;
+	output wire [31:0] div_hi_e;
+	output wire [31:0] div_lo_e;
 
 	// This is 1 if the outputs of a divide instruction are being written
 	// to the registers; 0 otherwise.
@@ -149,13 +149,13 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	output wire is_byte_e;
 
 	// The 32-bit output from the ALU.
-	output wire [31:0] ALUOutE;
+	output wire [31:0] alu_out_e;
 
 	// The 32-bit LHS of the ALU operation to perform.
-	wire [31:0] SrcAE; // Note: Not a top-level output from the EX stage
+	wire [31:0] src_l; // Note: Not a top-level output from the EX stage
 
 	// The 32-bit RHS of the ALU operation to perform.
-	wire [31:0] SrcBE; // Note: Not a top-level output from the EX stage
+	wire [31:0] src_r; // Note: Not a top-level output from the EX stage
 
 	// The execute stage's shift immediate value
 	wire [4:0] shamt_e;
@@ -167,7 +167,7 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 
 	// Instantiate all muxes, the ALU, and the EX pipeline register
 
-	execute_pipeline_reg EX_pipeline_reg(
+	execute_pipeline_reg pipeline_reg(
 		.clock(clock), 
 		.flush_e(flush_e), 
 		.reg_write_d(reg_write_d),
@@ -208,19 +208,19 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 		.has_div_e(has_div_e),
 		.is_byte_e(is_byte_e));
 
-	mux5_2 write_reg_mux(rd_id_e, rt_id_e, reg_dest_e, WriteRegE);
-	mux32_3 write_data_mux(rt_value_e, mem_to_ex_value, ex_to_ex_value, ForwardBE, WriteDataE);
-	mux32_3 srcA_mux(rs_value_e, mem_to_ex_value, ex_to_ex_value, ForwardAE, SrcAE);
-	mux32_2 srcB_mux(sign_imm_e, WriteDataE, alu_src_e, SrcBE);
+	mux5_2 write_reg_mux(rd_id_e, rt_id_e, reg_dest_e, write_reg_e);
+	mux32_3 write_data_mux(rt_value_e, mem_to_ex_value, ex_to_ex_value, forward_rt_e, write_data_e);
+	mux32_3 src_rs_mux(rs_value_e, mem_to_ex_value, ex_to_ex_value, forward_rs_e, src_l);
+	mux32_2 src_rt_mux(sign_imm_e, write_data_e, alu_src_e, src_r);
 
-	alu myALU(
-		.l_value(SrcAE),
-		.r_value(SrcBE),
+	alu my_alu(
+		.l_value(src_l),
+		.r_value(src_r),
 		.alu_op(alu_op_e),
 		.shamt(shamt_e),
-		.result(ALUOutE),
-		.div_hi(DivHiE),
-		.div_lo(DivLoE)
+		.result(alu_out_e),
+		.div_hi(div_hi_e),
+		.div_lo(div_lo_e)
 		);
 	
 	syscall_unit syscall_unit(syscall_e, syscall_funct_e, syscall_param_1_e);
