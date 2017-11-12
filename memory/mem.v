@@ -14,7 +14,7 @@
 //`define MEM_VERBOSE
 
 
-module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output reg [31:0] RD);
+module Memory(input [31:0] address, WD, input WE, clock, MemToRegM, RegWriteM, output reg [31:0] RD);
 	// Old: h'7fff_fffC
   reg [31:0] stack[`STACK_BOT:`STACK_TOP]; // 1k Stack from 7fff_fffc down
   reg [31:0] text_dat[`TEXT_DAT_BOT:`TEXT_DAT_TOP]; // 2k text... I think?
@@ -40,14 +40,14 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
 
   wire [31:0] text_A;
   
-  assign text_A = A >> 2;
+  assign text_A = address >> 2;
 
-  always @(negedge CLK) begin
-    if (A <= `STACK_TOP && A >= `STACK_BOT) begin
-      RD <= stack[A];
+  always @(negedge clock) begin
+    if (address <= `STACK_TOP && address >= `STACK_BOT) begin
+      RD <= stack[address];
 
        if (MemToRegM && mem_verbose) begin
-          $display($time, ": Reading from .stack address [%h]: %h", A, stack[A]);
+          $display($time, ": Reading from .stack address [%h]: %h", address, stack[address]);
        end
     end else if (text_A <= `TEXT_DAT_TOP && text_A >= `TEXT_DAT_BOT) begin
       // TODO: LB can do un-aligned memory access. That means accessing
@@ -59,20 +59,20 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
       RD <= text_dat[text_A];
     end else begin
       if (MemToRegM && RegWriteM) begin
-        $display($time, ": Attempt to read from undefined address %h.", A);
+        $display($time, ": Attempt to read from undefined address %h.", address);
       end
       RD <= `undefined;
     end
   end
 
-  always @(negedge CLK) begin
+  always @(negedge clock) begin
     if (WE) begin // MemWrite signal
-      if (A <= 32'h7FFF_FFFC && A >= 32'h7FFF_FBFC) begin
+      if (address <= 32'h7FFF_FFFC && address >= 32'h7FFF_FBFC) begin
 	  	if (mem_verbose) begin
 			$display($time, ": Writing to .stack address [%h]: %h replacing %h",
-				  A, WD, stack[A]);
+				  address, WD, stack[address]);
 		end
-        stack[A] <= WD;
+        stack[address] <= WD;
       end else if (text_A <= `TEXT_DAT_TOP && text_A >= `TEXT_DAT_BOT) begin
 	  	if (mem_verbose) begin
         	$display($time, ": Writing to .text (read-only) address [%h]: %h replacing %h",
@@ -80,7 +80,7 @@ module Memory(input [31:0] A, WD, input WE, CLK, MemToRegM, RegWriteM, output re
 		end
 		text_dat[text_A] <= WD;
       end else begin
-        $display($time, ": Tried to write to unallocated address %h", A);
+        $display($time, ": Tried to write to unallocated address %h", address);
       end
     end // MemWrite signal if block
   end // always block

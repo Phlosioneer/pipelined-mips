@@ -7,10 +7,10 @@
 /** Combines the pipeline register feeding the Memory stage with the memory
  * stage logic.
  */
-module mem_stage(input CLK, RegWriteE, MemtoRegE, MemWriteE,
-  input [31:0] ALUOutE, WriteDataE,
-	input [4:0] WriteRegE, input HasDivE, input [31:0] DivHiE, input [31:0] DivLoE,
-	input IsByteE,
+module mem_stage(input clock, reg_write_e, mem_to_reg_e, mem_write_e,
+  input [31:0] alu_out_e, write_data_e,
+	input [4:0] write_reg_e, input has_div_e, input [31:0] div_hi_e, input [31:0] div_lo_e,
+	input is_byte_e,
   output RegWriteM, MemtoRegM,
   output [31:0] RD, ALUOutM, output [4:0] WriteRegM, output HasDivM,
   output [31:0] DivHiM, output [31:0] DivLoM);
@@ -29,17 +29,17 @@ module mem_stage(input CLK, RegWriteE, MemtoRegE, MemWriteE,
   // Modules
   mem_pipeline_register memPipelineRegister(
     // inputs
-    .clk(CLK),
-    .RegWriteE(RegWriteE),
-    .MemtoRegE(MemtoRegE),
-    .MemWriteE(MemWriteE),
-    .ALUOutE(ALUOutE),
-    .WriteDataE(WriteDataE),
-    .WriteRegE(WriteRegE),
-    .HasDivE(HasDivE),
-    .DivHiE(DivHiE),
-    .DivLoE(DivLoE),
-    .IsByteE(IsByteE),
+    .clock(clock),
+    .reg_write_e(reg_write_e),
+    .mem_to_reg_e(mem_to_reg_e),
+    .mem_write_e(mem_write_e),
+    .alu_out_e(alu_out_e),
+    .write_data_e(write_data_e),
+    .write_reg_e(write_reg_e),
+    .has_div_e(has_div_e),
+    .div_hi_e(div_hi_e),
+    .div_lo_e(div_lo_e),
+    .is_byte_e(is_byte_e),
 
     // outputs
     .RegWriteM(RegWriteM),
@@ -54,10 +54,10 @@ module mem_stage(input CLK, RegWriteE, MemtoRegE, MemWriteE,
     .IsByteM(IsByteM));
 
   Memory dataMemory(
-	.A(ALUOutM),
+	.address(ALUOutM),
 	.WD(raw_mem_input),
 	.WE(MemWriteM),
-	.CLK(CLK),
+	.clock(clock),
 	.MemToRegM(MemtoRegM),
 	.RegWriteM(RegWriteM),
 	.RD(raw_mem_output));

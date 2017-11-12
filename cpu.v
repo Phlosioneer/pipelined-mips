@@ -238,19 +238,19 @@ module cpu(clock);
         );
 
     mem_stage myMemStage(
-        .CLK(clock),
+        .clock(clock),
 
         // Input from the Execute stage.
-		.RegWriteE(RegWriteE),
-        .MemtoRegE(MemtoRegE),
-        .MemWriteE(MemWriteE),
-        .ALUOutE(ALUOutE),
-        .WriteDataE(WriteDataE),
-        .WriteRegE(WriteRegE),
-		.HasDivE(HasDivE),
-		.DivHiE(DivHiE),
-		.DivLoE(DivLoE),
-		.IsByteE(IsByteE),
+		.reg_write_e(RegWriteE),
+        .mem_to_reg_e(MemtoRegE),
+        .mem_write_e(MemWriteE),
+        .alu_out_e(ALUOutE),
+        .write_data_e(WriteDataE),
+        .write_reg_e(WriteRegE),
+		.has_div_e(HasDivE),
+		.div_hi_e(DivHiE),
+		.div_lo_e(DivLoE),
+		.is_byte_e(IsByteE),
 
 		// Output to the WB stage.
         .RegWriteM(RegWriteM),
