@@ -14,7 +14,7 @@
 //`define MEM_VERBOSE
 
 
-module Memory(input [31:0] address, write_value, input enable_write, clock, mem_to_reg_m, reg_write_m, output reg [31:0] read_value);
+module memory(input [31:0] address, write_value, input enable_write, clock, mem_to_reg_m, reg_write_m, output reg [31:0] read_value);
 	// Old: h'7fff_fffC
   reg [31:0] stack[`STACK_BOT:`STACK_TOP]; // 1k Stack from 7fff_fffc down
   reg [31:0] text_dat[`TEXT_DAT_BOT:`TEXT_DAT_TOP]; // 2k text... I think?

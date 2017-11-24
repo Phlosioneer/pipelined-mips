@@ -1,5 +1,5 @@
 `include "memory/mem_pipeline_register.v"
-`include "memory/mem.v"
+`include "memory/mem_unit.v"
 
 `ifndef MEM_STAGE
 `define MEM_STAGE
@@ -27,7 +27,7 @@ module mem_stage(input clock, reg_write_e, mem_to_reg_e, mem_write_e,
   wire [31:0] raw_mem_input;
 
   // Modules
-  mem_pipeline_register memPipelineRegister(
+  mem_pipeline_register pipeline_reg(
     // inputs
     .clock(clock),
     .reg_write_e(reg_write_e),
@@ -53,7 +53,7 @@ module mem_stage(input clock, reg_write_e, mem_to_reg_e, mem_write_e,
     .div_lo_m(div_lo_m),
     .is_byte_m(is_byte_m));
 
-  Memory dataMemory(
+  memory mem_unit(
 	.address(alu_out_m),
 	.write_value(raw_mem_input),
 	.enable_write(mem_write_m),

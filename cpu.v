@@ -267,22 +267,22 @@ module cpu(clock);
     
     writeback_pipeline_reg wpipe(
     .clock(clock), 
-    .RegWriteM(RegWriteM),
-    .MemtoRegM(MemtoRegM), 
-    .ReadDataM(Writeback_RD), 
-    .ALUOutM(ALUOutM), 
-    .WriteRegM(WriteRegM),
-    .HasDivM(HasDivM),
-    .DivHiM(DivHiM),
-    .DivLoM(DivLoM), 
-    .RegWriteW(RegWriteW), 
-    .MemtoRegW(MemtoRegW), 
-    .ReadDataW(ReadDataW), 
-    .ALUOutW(ALUOutW), 
-    .WriteRegW(WriteRegW),
-    .HasDivW(HasDivW),
-    .DivHiW(DivHiW),
-    .DivLoW(DivLoW)
+    .reg_write_m(RegWriteM),
+    .mem_to_reg_m(MemtoRegM), 
+    .read_value_m(Writeback_RD), 
+    .alu_out_m(ALUOutM), 
+    .write_reg_m(WriteRegM),
+    .has_div_m(HasDivM),
+    .div_hi_m(DivHiM),
+    .div_lo_m(DivLoM), 
+    .reg_write_w(RegWriteW), 
+    .mem_to_reg_w(MemtoRegW), 
+    .read_value_w(ReadDataW), 
+    .alu_out_w(ALUOutW), 
+    .write_reg_w(WriteRegW),
+    .has_div_w(HasDivW),
+    .div_hi_w(DivHiW),
+    .div_lo_w(DivLoW)
     );
     
     hazard_unit hazard(
