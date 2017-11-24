@@ -287,31 +287,31 @@ module cpu(clock);
     
     hazard_unit hazard(
 	// Inputs
-	.RsD(RsD),
-	.RtD(RtD),
-	.BranchD(BranchD),
-	.RsE(RsE),
-	.RtE(RtE),
-	.WriteRegE(WriteRegE),
-	.MemtoRegE(MemtoRegE),
-	.RegWriteE(RegWriteE),
-	.WriteRegM(WriteRegM),
-	.MemtoRegM(MemtoRegM),
-	.RegWriteM(RegWriteM),
-	.WriteRegW(WriteRegW),
-	.RegWriteW(RegWriteW),
-	.syscallD(syscallD),
-	.MfOpInD(MfOpInD),
-	.HasDivE(HasDivE),
-	.HasDivM(HasDivM),
-	.HasDivW(HasDivW),
+	.rs_id_d(RsD),
+	.rt_id_d(RtD),
+	.branch_d(BranchD),
+	.rs_id_e(RsE),
+	.rt_id_e(RtE),
+	.write_reg_e(WriteRegE),
+	.mem_to_reg_e(MemtoRegE),
+	.reg_write_e(RegWriteE),
+	.rd_id_m(WriteRegM),
+	.mem_to_reg_m(MemtoRegM),
+	.reg_write_m(RegWriteM),
+	.rd_id_w(WriteRegW),
+	.reg_write_w(RegWriteW),
+	.syscall_d(syscallD),
+	.mf_op_in_d(MfOpInD),
+	.has_div_e(HasDivE),
+	.has_div_m(HasDivM),
+	.has_div_w(HasDivW),
 
 	// Outputs
-	.StallF(StallF),
-	.StallD(StallD),
-	.FlushE(FlushE),
-	.ForwardAE(forward_rs_e),
-	.ForwardBE(forward_rt_e)
+	.stall_f(StallF),
+	.stall_d(StallD),
+	.flush_e(FlushE),
+	.forward_rs_e(forward_rs_e),
+	.forward_rt_e(forward_rt_e)
 	);
 
 
