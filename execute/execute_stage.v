@@ -13,7 +13,7 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	alu_src_d, reg_dest_d, rs_value_d, rt_value_d, rs_id_d, rt_id_d, rd_id_d, sign_imm_d, shamt_d,
 	is_syscall_d, syscall_funct_d, syscall_param_1_d, has_div_d, is_byte_d,
 	reg_write_e, mem_to_reg_e, mem_write_e, reg_dest_e,
-	rs_id_e, rt_id_e, rd_id_e,
+	rs_id_e, rt_id_e,
 	mem_to_ex_value, ex_to_ex_value, forward_rs_e, forward_rt_e,
 	write_reg_e, write_data_e, alu_out_e, div_hi_e, div_lo_e, has_div_e, is_byte_e);
 
@@ -125,7 +125,7 @@ module execute_stage(clock, flush_e, reg_write_d, mem_to_reg_d, mem_write_d, alu
 	output wire [4:0] rt_id_e;
 
 	// The destination register.
-	output wire [4:0] rd_id_e;
+	wire [4:0] rd_id_e;
 
 	// The sign-extended immediate value.
 	wire [31:0] sign_imm_e;
